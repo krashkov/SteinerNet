@@ -1,0 +1,10 @@
+b21625eb73c275d1c6ddf2d69b4a45f9 *DESCRIPTION
+20ea82650045883fe1064fc37912be92 *NAMESPACE
+4531d68dc4ac11aaeb5d86ac3194dc7f *R/SteinerTree.r
+cce4ba4d53e04fea6ef0426ffc6ca0ad *R/analysis.r
+668cbeeffcfec384da5547666c61448a *R/simulations.r
+3e3a847ca7efeed4773e50b4373cb0d9 *inst/doc/SteinerNet.pdf
+c295e72b08ce44ebbbe6237f3b78b5c9 *man/generate_st_samples.Rd
+5c4454df07066844aa9722c1d77e48a3 *man/steiner_comparison_plots.Rd
+20ff2570d493d2eeb5084f50e530df52 *man/steiner_simulation.Rd
+f7d0c5979d060ace5331bfc7bc53c309 *man/steinertree.Rd
