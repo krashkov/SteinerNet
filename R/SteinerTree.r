@@ -1,5 +1,5 @@
 ####################################################################################################################
-# 19 dec 2011
+# 19 sep 2012
 #
 #This approximation heuristic is inspired from one steiner heuristic but developed according to steiner trees on graph network 
 #
@@ -541,7 +541,7 @@ steinertree2 <- function(labelcheck=TRUE , coloring=FALSE, ter_list= NULL, glist
 #g is a graph,just for the test we used common memory for g so to reduce runing time,it must be added again
 steinertree3 <- function(labelcheck=TRUE,coloring=TRUE,ter_list=NULL,glist)
 {
- 	 color=c()	
+ 	 color=subtreenum=c()	
 	 graph=glist[[1]]
 	 if (!is.null(graph)){
 		if (!is.connected(graph) ){ print("Error : the graph is disconnected Steiner tree does not exist.") }
@@ -713,8 +713,7 @@ steinertree3 <- function(labelcheck=TRUE,coloring=TRUE,ter_list=NULL,glist)
 	 if(coloring)
 	 {
 		V(g)$color="yellow"
-		#V(g)[subtrees[[subtreenum]]]$color="green"
-		V(g)[subtrees[[1]]]$color="green"
+		V(g)[subtrees[[subtreenum]]]$color="green"
 		V(g)[unlist(terminals)]$color="red"
 	 }
 	#-----------------to recover the real label:
@@ -1025,7 +1024,7 @@ steinertree8 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,ReturnAll
 #	This function takes a list of varient topologies of steiner trees using same terminal set on
 #	a graph and returns the multiple steiner tree over them
 #	Bonn Achen international center Bonn Germany
-#	Prof Dr Frohlich Afshin Sadeghi 
+#	Afshin Sadeghi 
 #	31 jan 2012 contact: sadeghi.afshin@gmail.com
 #
 ######################################################################################################
@@ -1037,7 +1036,7 @@ Merge_Steiner = function(glist)
 
 	if(length(MStree) > 1){ 
 	 	for (i  in 2:length(MStree) ){
-		 merged= join(merged,igraph.to.graphNEL(MStree[[i]]))	
+		 merged= igraph0::join(merged,igraph.to.graphNEL(MStree[[i]]))	
 	 	}		
 	}
 	return(igraph.from.graphNEL(merged))
@@ -1290,19 +1289,49 @@ steinerexact <- function(labelcheck = FALSE , coloring=FALSE, ter_list= NULL, Re
 #	"ter_list" is the list of terminals for the steiner tree
 #
 
-steinertree <- function( type,coloring= FALSE,ter_list = NULL, enumerate= FALSE ,graph)
+steinertree <- function( type, ter_list = NULL, graph, enumerate= FALSE  ,coloring= FALSE)
 {	
 	color=c()
 	if(is.null(graph)){
-		print("Error, graph object is Null.")
+		print("Error, the input graph object is Null.")
 		return()		
 	}
-	
-	if (is.null(ter_list) || ter_list == FALSE || length(ter_list)==0){
+	if(!is.connected(graph)){
+		print("Error, the input graph is not connected.")
+		return()		
+	}
+
+	if( length(V(graph))== 0 ){
+		print("Error, the input graph has no vertices.")
+		return()		
+	}
+
+	if( is.null(graph[[9]][[3]]) ){
+		print("Error, the input graph vertices are NULL.")
+		return()		
+	}
+
+
+	if( length(graph[[9]][[3]])==0 ){
+		print("Warning, the input graph vertices have no name and no label.")
+	}
+
+	if( !length(graph[[9]][[3]])==0 ){
+		if( (is.na(graph[[9]][[3]]))  ){
+		print("Error, the input graph has no vertices.")
+		return()		
+	}}
+
+	if (is.null(ter_list) || is.na(ter_list) || ter_list == FALSE || length(ter_list)==0){
 			ter_list = V(graph)[color=="red"]
 		}
-	if (is.null(ter_list) ||  length(ter_list)==0 ){
+	if  (is.null(ter_list) || is.na(ter_list) || length(ter_list)==0){
 		print("Error,no terminal list is defined.")
+		return()
+	}
+
+	if  (class(ter_list) == "numeric" || class(ter_list) == "integer" ){
+		print("Error, terminal list is must be a character type list.")
 		return()
 	}
 

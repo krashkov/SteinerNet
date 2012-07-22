@@ -46,15 +46,12 @@ When \code{test} is appr the function returns random sets of terminals.
 	1. Please refer to the paper that is published with this package. 
 }
 
-\author{Afshin Sadeghi, Holger Froehlich}
+\author{Afshin Sadeghi}
 
 \examples{
  library(SteinerNet)
  g <- graph.ring(10)
  #generate_st_samples("exact", g, "testfolder", c(2,3), c(.8,.8))
- 
-
-
 }
 \keyword{graphs, protein interaction, network, pathway data graph, steiner tree}
 

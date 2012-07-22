@@ -32,7 +32,8 @@ This function performs three type of experiments. Test specifies the type of com
 
 If \code{testfolder} is NULL, it will use default value "steinerdata2" for folder when \code{test} is \code{exact} and "steinerdataenum" when \code{test} is \code{enum}.
 
-In our study, we repeated the tests 50 times, and we made the random walk to select a node to be terminal with 0.5 probability. Therefore \code{repetition} in our comparison was a list of fifty 0.5 values.
+In our study, we repeated the tests 50 times, and we made the random walk to select a node to be terminal with 0.5  probability. Therefore \code{repetition} in our comparison was a list of fifty 0.5 values. We also survied the behavior of the algorithms when selection probability was and 0.2
+ and 0.8.
 }
 
 \value{
@@ -44,7 +45,7 @@ The function stores the result of execution of Steiner trees and the time of the
 	1. Please refer to the paper that is published with this package. 
 }
 
-\author{Afshin Sadeghi, Holger Froehlich}
+\author{Afshin Sadeghi}
 
 \examples{
  library(SteinerNet)

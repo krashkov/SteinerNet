@@ -1,26 +1,27 @@
 
 \name{steinertree}
 \alias{steinertree}
-\alias{steinertree,boolean,boolean,list,boolean,graph}
-\alias{steinertree,charahter,missing,list,boolean,graph}
-\alias{steinertree,missing,character,list,boolean,graph}
-\alias{steinertree,missing,missing,missing,boolean,graph}
-\alias{steinertree,missing,boolean,list,boolean,graph}
-\alias{steinertree,missing,missing,missing,graph}
-\alias{steinertree,missing,missing,boolean,graph}
-
+\alias{steinertree, character list, graph, boolean, boolean}
+\alias{steinertree, character list, graph}
+\alias{steinertree, character list, graph, boolean}
+\alias{steinertree, character list, graph, missing, boolean}
+\alias{steinertree, NULL, graph, boolean, boolean}
+\alias{steinertree, NULL, graph}
+\alias{steinertree, NULL, graph, boolean}
+\alias{steinertree, NULL, graph, missing, boolean}
 \title{steinertree}
 \description{A function which involves a set of steiner tree algorithms on networks. This set involves an exact algorithm and five heuristic algorithms.}
 \usage{
-steinertree(type, coloring = FALSE, ter_list = NULL, enumerate = FALSE, graph)
+steinertree(type, ter_list = NULL, graph, enumerate = FALSE, coloring = FALSE)
 }
 
 \arguments{
   \item{type}{\code{type} specifies which steiner algorithm to use.}
-  \item{coloring}{\code{coloring} is a boolean value. When it is TRUE, the function will return a list that consists of the result stiener tree and a copy of the input graph while including the random terminals within the input graph are specified by coloring of nodes. In this graph, green nodes would represent steiner nodes and red nodes represent terminals.}
-  \item{ter_list}{\code{ter_list} is an input list of terminals. Steiner tree algorithm finds the result according to terminals.}
-   \item{enumerate}{\code{enumerate} a boolean value to force the steiner tree function to return merged enumerated solutions.}
-  \item{graph}{\code{graph} is an input igraph object which is delivered to one of the steiner tree algorithms of the package.} 
+  \item{ter_list}{\code{ter_list} is an input list of terminals. This list should have character type. Steiner tree algorithm finds a solution according to this list.}
+  \item{graph}{\code{graph} is an input igraph object which is delivered to one of the steiner tree algorithms of the package. This graph should be connected and it should have undirected edges.} 
+  \item{enumerate}{\code{enumerate} a boolean value to specify EXA and SPM algorithms. It tells the steiner tree function to return a merged enumerated set of solutions.}
+  \item{coloring}{\code{coloring} is a boolean value. When it is TRUE, the function will return two results in a list. The first member of this list represents resulted steiner tree within the input graph by coloring it. In this case the terminals are specified by red color and Steiner nodes are represented by green. Second member of the output list is a single Steiner tree which is represented with a new graph object. When \code{coloring} is FALSE the function returns the answer in form of a new single graph.}
+
 }
 
 \details{
@@ -41,12 +42,11 @@ type specifes the steiner algorithm to deploy to the input graph and terminal se
 
 EXA and SPM algorithms can return a single solution or run in enumerating mode. The boolean value of enumerate specefies one of the two cases. If this value is FALSE they return one of their enumerated steiner solutions without merging it to other solutions. If it is TRUE they return the merged enumerated solutions of the steiner tree problem. 
 
-According to our knowledge RSP, EXA Enumeration, SPM are represented for the first time in this package and are new algorithms. [4]
+According to our knowledge RSP, EXA Enumeration, SPM and KB are represented for the first time in this package and in the paper that comes with its. [4]
 
 \code{ter_list} value can be NULL. In this case, the function will observe graph vertex colors to find terminals. To call the function in this approach, the terminal nodes should be colored in red and the non-terminal nodes should be yellow.
 
-This function handles input igraph objects which their vertices have labels and names. To apply the function on graphs with no 
-label and name, \code{steinertree} function  automatically recognizes non-labeled graph vertices and creates names and labels for them. The new labels and names for vertices are created according to the vertice ID of each vertice.
+This function handles input igraph objects which their vertices have labels and names. To apply the function on graphs with no label and name, \code{steinertree} function  automatically recognizes non-labeled graph vertices and creates names and labels for them. The new labels and names for vertices are created according to the vertice ID of each vertice.
 
 }
 
@@ -69,33 +69,34 @@ When \code{coloring} is TRUE returns a list that consists of two objects. The fi
 The Optimal solution for stiner trees on networks,ISBN: 978-0-444-89098-6.
 }
 
-\author{Afshin Sadeghi, Holger Froehlich}
+\author{Afshin Sadeghi}
 
 \examples{
  #example 1
  library(SteinerNet)
  g <- graph.ring(10)
- ter_list= c(1,2,9)	
- SPM=steinertree("SPM", FALSE, ter_list, TRUE, g)
+ ter_list= c("1","2","9")	
+ #SP=steinertree("SP", ter_list, g)
+ #SPM=steinertree("SPM", ter_list, g , TRUE)
  
+
  #example 2
+
  g2 <- graph( c(0,2,1,2,2,3,3,4,5,6,3,6,2,7,2,5,2,6,5,8), directed=FALSE)
  V(g2)$color="yellow"
  V(g2)$color[c(1,4)]="red"		
- OP=steinertree("SP", TRUE, NULL, FALSE, g2)
+ OP=steinertree("SP", NULL, g2, FALSE, TRUE)
 
  #example 3: A case study with a sample graph and a given gene list
 
  g <- graph( c(0,2,1,2,2,3,3,4,5,6,3,6,2,7,2,5,2,6,5,8), directed=FALSE)
- V(g)$name=c(1058, 51203, 6515, 83879, 160897, 10531, 8659, 2947, 643008)
- geneid_list= c(1058,83879, 160897,643008)
- list =as.character(geneid_list)
+ V(g)$name= c("1058", "51203", "6515", "83879", "160897", "10531", "8659", "2947", "643008")
+ geneid_list= c("1058","83879", "160897","643")
  #we include into the test those geneIDes who exist within the base graph.
- r =1:(length(list)) 	 
- t =sapply (r ,function(r) !is.na(match(list[r],c(g)[[9]][[3]]$name ) ))
- IDlist1=list[t==TRUE]
- ST1=steinertree( "SP", FALSE,IDlist1, FALSE ,g) 
- #result1= graphEnt_Sym(ST1[[1]])  # converts the Gene entrez ID taken from the graph node "names" and store them as "labels" of the nodes 
+ r = 1:(length(geneid_list)) 	 
+ t = sapply (r ,function(r) !is.na(match(geneid_list[r],V(g)$name )) )
+ glist = geneid_list[t==TRUE]
+ ST1= steinertree( "SP", glist, g) 
  #tkplot(result1)             # tkplot function displays labels instead of names
 
 }

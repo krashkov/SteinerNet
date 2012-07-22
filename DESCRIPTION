@@ -1,18 +1,19 @@
 Package: SteinerNet
-Version: 1.1
+Version: 1.2
 Date: 2012-7-22
-Title: Steiner approach for Biological Pathway Graph Analysis
+Title: Steiner Tree Approach for Graph Analysis
 License: GPL-3
-Author: Afshin Sadeghi, Holger Froehlich
-Maintainer: Afshin Sadeghi <sadeghi@informatik.uni-bonn.de>
-Depends: R (>= 2.0), igraph0 , RBGL , limma
-Imports: igraph0, RBGL, limma
-Description: A set of graph functions writen in R to perform steiner
-        tree network data analysis on biological pathway data
-Packaged: 2012-07-24 07:52:30 UTC; sadeghi
-X-CRAN-Original-Package: SteinerNet
+Author: Afshin Sadegh
+Maintainer: Afshin Sadeghi <sadeghi.afshin@gmail.com>
+Depends: R (>= 2.0), igraph0, limma, RBGL
+Imports: igraph0, limma, RBGL
+Description: A set of graph functions writen in R to find Steiner trees
+        on graphs. It provides tools for analysing Steiner tree
+        application on networks. It has applications in biological
+        pathway network analysis.
+Packaged: 2012-09-20 00:14:17 UTC; sadeghi
 X-CRAN-Comment: Package is broken since a (premilinary announced) API
         change in package igraph, although an igraph0 compatibility
         package is available.
 Repository: CRAN
-Date/Publication: 2012-07-24 08:22:07
+Date/Publication: 2012-09-20 06:10:12

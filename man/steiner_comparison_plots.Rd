@@ -68,7 +68,7 @@ The function stores a resulted plot in a PDF file.
 	1. Please refer to the paper that is published with this package. 
 }
 
-\author{Afshin Sadeghi, Holger Froehlich}
+\author{Afshin Sadeghi}
 
 \examples{
  library(SteinerNet)

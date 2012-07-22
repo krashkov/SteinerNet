@@ -46,7 +46,7 @@ gRandWalk <- function(graph,numofterminals,terminalpr,makenewgraph=FALSE)
 		if (prob < terminalpr ) {
 		terlist[[length(terlist)+1]] <- V(g)[seed]$name
 		terlist = unique((unlist(terlist)))
-		cat("terminallist",terlist," node number :",i ,"seed:",seed ,",and selected to be terminal  \n" )
+		cat("terminallist",terlist," node number :",i ,"seed:",seed ,", and selected to be terminal. \n" )
 		cat ("terlist,",terlist ,"\n")
 		i = length(terlist)
 		}
@@ -145,14 +145,14 @@ mulSteiner = function(folder,experiments = NULL,listofterminaltest,repetition)
  		 cat("runing of the exact for graph with |v|=",length(V(g))," \n")
 		 a=Sys.time()
 		 	 
-		 EXA = steinertree("EXA",FALSE,NULL,TRUE,g)
+		 EXA = steinertree("EXA",NULL,g,TRUE, FALSE)
 		 b=Sys.time()
 		 t1=b-a
  		 cat("runtime of multiple EXA unification" ,i,j,"is", t1, units(t1),"\n")
 		 
 		 cat("runing of test SPM (multi steiner tree) \n")
 		 a= Sys.time()
-		 SPM = steinertree("SPM",FALSE,NULL,TRUE,g)
+		 SPM = steinertree("SPM",NULL,g,TRUE, FALSE)
 		 b= Sys.time()
 		 t2 =b-a
  		 cat("runtime of multiple SPM unification" ,i,j,"is", t2,units(t2),"\n")
@@ -221,20 +221,20 @@ appr_tests= function(folder , experiments = NULL, listofterminaltest, repetition
 		 t1=0
 		 cat("runing of test SP.. \n") 
 		 a=Sys.time()
-		 ST2=steinertree("SP",FALSE,ter_list,FALSE,g)
+		 ST2=steinertree("SP",ter_list,g,FALSE,FALSE)
 		 b=Sys.time()
 		 t3=b-a
 		 cat("runtime of test SP" ,i,j,"is", t3,units(t3),"\n")
 		 #cat("runing of test ST3 \n")	 
 		 #a=Sys.time()
-		 #ST3=steinertree("KRU",FALSE,ter_list,FALSE,g)
+		 #ST3=steinertree("KRU",ter_list,g,FALSE,FALSE)
 		 #b=Sys.time()
 		 #t4=b-a
 		 #cat("runtime of test ST3" ,i,j,"is", t4,units(t4),"\n") 
 
 		 cat("runing of test ST4 appr steiner \n")
 		 a=Sys.time()
-		 ST4=steinertree("RSP",FALSE,ter_list,FALSE,g) 
+		 ST4=steinertree("RSP",ter_list,g,FALSE,FALSE) 
 		 b=Sys.time()
 		 t5=b-a
 		 cat("runtime of test ST4" ,i,j,"is", t5,units(t5),"\n") 
@@ -270,7 +270,7 @@ appr_KB_tests= function(folder , experiments = NULL, listofterminaltest, repetit
 		 ter_list = V(g)[color=="red"]
 		 cat("runing of test KB  j,i :",j,i," \n")	 
 		 a=Sys.time()
-		 ST3=steinertree("KB",FALSE,ter_list,FALSE,g)
+		 ST3=steinertree("KB",ter_list,g,FALSE,FALSE)
 		 b=Sys.time()
 		 t4=b-a
 		 cat("runtime of test KB" ,j,i,"is", t4,units(t4),"\n") 
@@ -366,32 +366,32 @@ exact_tests= function(folder, experiments= NULL, listofterminaltest, repetition 
 		t1=0
 		cat("runing of test Seiner Tree Exact solution.. \n")
 		a=Sys.time()
-		try({EXA=steinertree("EXA",FALSE,NULL,FALSE,g)}, silent=FALSE)
+		try({EXA=steinertree("EXA",NULL,g ,FALSE,FALSE)}, silent=FALSE)
 		b=Sys.time()   
 		t1=b-a    
 		cat("runtime of test EXA exact solution" ,i,j,"is", t1,units(t1)," and the steiner tree size is ",length(E(EXA[[1]])),"\n")
 		if (length(EXA)> 1){cat( "solution is a list of  " ,length(EXA) , " ST trees",  "\n")	}	    
 		cat("Executing SP test: \n") 
 		a=Sys.time()
-		ST2=steinertree("SP",FALSE,NULL,FALSE,g)
+		ST2=steinertree("SP", NULL, g, FALSE, FALSE)
 		b=Sys.time()
 		t3=b-a
 		cat("runtime of test ST2" ,i,j,"is", t3,units(t3)," and the steiner tree size is ",length(E(ST2[[1]])),"\n")
 		cat("Executing  ST3 test \n")	 
 		a=Sys.time()
-		ST3=steinertree("KRU",FALSE,NULL,FALSE,g)
+		ST3=steinertree("KRU", NULL, g, FALSE, FALSE)
 		b=Sys.time()
 		t4=b-a
 		cat("runtime of test ST3" ,i,j,"is", t4,units(t4)," and the steiner tree size is ",length(E(ST3[[1]])),"\n")  
 		cat("Executing ST4 appr steiner test \n")
 		a=Sys.time()
-		ST4=steinertree("RSP",FALSE,NULL,FALSE,g) #269 biggest num of V when 100 terminals and 13500 was the size
+		ST4=steinertree("RSP", NULL, g, FALSE, FALSE) #269 biggest num of V when 100 terminals and 13500 was the size
 		b=Sys.time()
 		t5=b-a
 		cat("runtime of test ST4 approximation alg" ,i,j,"is", t5,units(t5)," and the steiner tree size is ",length(E(ST4[[1]])),"\n") 
 		cat("Executing  SPM appr steiner test \n")
 		a=Sys.time()
-		SPM=steinertree("SPM",FALSE,NULL,FALSE,g)
+		SPM=steinertree("SPM", NULL, g, FALSE, FALSE)
 		b=Sys.time()
 		t6=b-a
 		if (class(SPM[[1]])== "igraph" ){cat("runtime of test SPM" ,i,j,"is", t1,units(t1)," and the steiner tree size is ",length(E(SPM[[1]])),"\n")	}	    
@@ -494,6 +494,9 @@ steiner_simulation=function(test,listofterminaltest,repetition,testfolder = NULL
 		if(!is.null(listofterminaltest))counter = 1:length(listofterminaltest)
 		if(is.null(testfolder)) testfolder= "steinerdata"
 		appr_tests(testfolder , counter,listofterminaltest,repetition)
+		asp_in_appr_tests(testfolder, counter, listofterminaltest, repetition)
+	       appr_KB_tests(testfolder, counter, listofterminaltest, repetition)
+
 	}
 	if(test== "enum"){
 		#adding the multi steiner algorithm results on simulation data for sake of comarison with other approximation algorithms

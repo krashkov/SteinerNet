@@ -17,7 +17,7 @@ steinertestplot_appr_dens_e  = function(testfolder , outputname , incldue_exact_
   sizeplot=c()
   tlist=c()
   slist=c()
-  ST1=ST2=ST3=ST4=ver=m=c()
+  ST1=ST2=ST3=ST4=ver=subg=m=c()
   counter = experiments
   if (is.null(experiments) ){ counter = 1:length(listofterminaltest) }
 	
@@ -912,7 +912,7 @@ steinertestplot_appr  = function(test_folder , outputname , incldue_exact_sol,ex
 	  # reading the data into proper time frame for box plot
 	  #
 	  #------------------------------------
-	  ST1=ST2=ST3=ST4=subg=runtimes=m=c()
+	  ST1=ST2=ST3=ST4=runtimes=subg=m=c()
 	  time_list_1=c()
 	  size_list_0=c()
 	  alg_list_0=c()
@@ -933,12 +933,12 @@ steinertestplot_appr  = function(test_folder , outputname , incldue_exact_sol,ex
 			 cat("heuristic approach comparison test number i,j",i,j,"\n")
 			 load(paste(test_folder,"/runtimes",j,"of",i,".RData",sep=""))
 
-					 
+		
 			 load(paste(test_folder,"/ST2",j,"of",i,".RData",sep=""))
 			 v2= length(V(ST2[[1]]))
 			 e2= length(E(ST2[[1]]))
 			 size_list_0[length( size_list_0)+1]=log10(e2)
-			 time_list_1[length( time_list_1)+1]=time_norm(runtimes[2],runtimes[6])
+			 time_list_1[length( time_list_1)+1]=time_norm(runtimes[1],runtimes[3])
 			 alg_list_0 [length(alg_list_0)+1] = "SP"
 			 alg_list_1 [length(alg_list_1)+1] = "SP"
 
@@ -956,7 +956,7 @@ steinertestplot_appr  = function(test_folder , outputname , incldue_exact_sol,ex
 			 v3= length(V(ST4[[1]]))
 			 e3= length(E(ST4[[1]]))
 			 size_list_0[length( size_list_0)+1]=log10(e3)
-			 time_list_1[length( time_list_1)+1]=time_norm(runtimes[4] ,runtimes[8])
+			 time_list_1[length( time_list_1)+1]=time_norm(runtimes[2] ,runtimes[4])
 			 alg_list_0 [length(alg_list_0)+1] = "RSP"
 			 alg_list_1 [length(alg_list_1)+1] = "RSP"
 
@@ -1068,8 +1068,8 @@ steinertestplot_appr2  = function(test_folder , outputname , incldue_exact_sol,e
 			 load(paste(test_folder,"/ST2",j,"of",i,".RData",sep=""))
 			 v2= length(V(ST2[[1]]))
 			 e2= length(E(ST2[[1]]))
- 			 time_list_1_log[length( time_list_1_log)+1]=time_norm(runtimes[2],runtimes[6]) 
-			 time_list_1[length( time_list_1)+1]=time_norm2(runtimes[2],runtimes[6])
+ 			 time_list_1_log[length( time_list_1_log)+1]=time_norm(runtimes[1],runtimes[3]) 
+			 time_list_1[length( time_list_1)+1]=time_norm2(runtimes[1],runtimes[3])
 			 alg_list_1 [length(alg_list_1)+1] = "SP"
 
 			 load(paste(test_folder,"/STKB",j,"of",i,".RData",sep=""))
@@ -1084,8 +1084,8 @@ steinertestplot_appr2  = function(test_folder , outputname , incldue_exact_sol,e
 			 load(paste(test_folder,"/runtimes",j,"of",i,".RData",sep=""))
 			 v3= length(V(ST4[[1]]))
 			 e3= length(E(ST4[[1]]))
-			 time_list_3_log[length( time_list_3_log)+1]=time_norm(runtimes[4],runtimes[8]) 	 
-			 time_list_3[length( time_list_3)+1]=time_norm2(runtimes[4] ,runtimes[8])
+			 time_list_3_log[length( time_list_3_log)+1]=time_norm(runtimes[2],runtimes[4]) 	 
+			 time_list_3[length( time_list_3)+1]=time_norm2(runtimes[2] ,runtimes[4])
 			 alg_list_1 [length(alg_list_1)+1] = "RSP"
 
 	 		 load(paste(test_folder,"/ALPH",j,"of",i,".RData",sep=""))
@@ -1219,7 +1219,7 @@ steinertestplot_appr_dens  = function(test_folder , outputname , incldue_exact_s
 	  # reading the data into proper time frame for box plot
 	  #
 	  #------------------------------------
-	  ST1=ST2=ST3=ST4=subg=ver=c()
+	  ST1=ST2=ST3=ST4=ver=subg=c()
 	  time_list_1=c()
 	  size_list_0=c()
 	  alg_list_0=c()
