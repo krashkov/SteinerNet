@@ -120,7 +120,7 @@ appr_steiner = function(runtime=5, labelcheck=TRUE, coloring= TRUE,  ter_list=NU
 	 steinert=(minimum.spanning.tree(subgraph(g,union(terminals,set))))
 	 #here we delete nonterminal vertices that has degree of 1
 	 	 a=V(steinert)$color
-		 b=igraph::degree(steinert, v=V(steinert), mode = c("all")) 
+		 b=igraph0::degree(steinert, v=V(steinert), mode = c("all")) 
 		 a1=match(a,"yellow")
 		 b1=match(b,"1")
 		 opt= sapply(1:length(a1),function(r) (a1[r]*b1[r] ) )
@@ -296,7 +296,7 @@ steinertree1 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,glist)
 	 steinert= minimum.spanning.tree(subgraph(g,subtree))
 	 #here we delete nonterminal vertices that has degree of 1
 	 a=V(steinert)$color 	 
-	 b=igraph::degree(steinert, v=V(steinert), mode = c("all")) #this is the way to call a function that is masked with another library(RBGL masks degree from igraph) 
+	 b=igraph0::degree(steinert, v=V(steinert), mode = c("all")) #this is the way to call a function that is masked with another library(RBGL masks degree from igraph) 
 	 a1=match(a,"yellow")
 	 b1=match(b,"1")
 	 opt= sapply(1:length(a1),function(r) (a1[r]*b1[r] ) )
@@ -468,7 +468,7 @@ steinertree2 <- function(labelcheck=TRUE , coloring=FALSE, ter_list= NULL, glist
 	 steinert= minimum.spanning.tree(subgraph(g,subtree))
  	 #here we delete nonterminal vertices that has degree of 1
  	 a=V(steinert)$color
-	 b=igraph::degree(steinert, v=V(steinert), mode = c("all")) 
+	 b=igraph0::degree(steinert, v=V(steinert), mode = c("all")) 
 	 a1=match(a,"yellow")
 	 b1=match(b,"1")
 	 opt= sapply(1:length(a1),function(r) (a1[r]*b1[r] ) )
@@ -558,15 +558,15 @@ steinertree3 <- function(labelcheck=TRUE,coloring=TRUE,ter_list=NULL,glist)
 			}
 		}
 	 x=c()
-	 makensubtrees = function(x)
-		{
-			if (!is.na(any(match(t3,x)))) {
-				return( setdiff(nsubtrees[[x]],found[[grep(1,match(t3,x))]][[1]])    )
-			}
-			else{
-				return (nsubtrees[[x]])	
-			}
-		} 
+	# makensubtrees = function(x)
+	#	{
+	#		if (!is.na(any(match(t3,x)))) {
+	#			return( setdiff(nsubtrees[[x]],found[[grep(1,match(t3,x))]][[1]])    )
+	#		}
+	#		else{
+	#			return (nsubtrees[[x]])	
+	#		}
+	#	} 
 	#####################################
           if(!is.null(ter_list)) 
 	  {
@@ -612,12 +612,13 @@ steinertree3 <- function(labelcheck=TRUE,coloring=TRUE,ter_list=NULL,glist)
 	 terminals = subtrees
 	 nsubtrees= lapply(r,function(r) setdiff(terminals,subtrees[r]))
 
-	 #optimize here
+	 #optimized  here : check if we have only one subtree instead of this big while condition here
 	 #while not all terminals are not added to subtree
-	 while( !any( sapply(1:length(terminals) ,function(x) all( is.element(terminals,intersect(subtrees[[x]],unlist(terminals))))) )    )#while any of the subrees has not all of terminals
+	 #while( !any( sapply(1:length(terminals) ,function(x) all( is.element(terminals,intersect(subtrees[[x]],unlist(terminals))))) )    )#while any of the subrees has not all of terminals	 
+	 while(length(subtrees) >1)
 	 {
 		 #find nearest from those terminals not in subgraph
-		 r=1:length(terminals)
+		 r=1:length(subtrees)
 		 paths=lapply(r,function(r) lapply(subtrees[[r]],  function(x,y) get.all.shortest.paths(g,x,y ),y=nsubtrees[[r]] ))
 		 #here find the "minimum" shortest path
 		 r=1:length(paths)
@@ -668,18 +669,41 @@ steinertree3 <- function(labelcheck=TRUE,coloring=TRUE,ter_list=NULL,glist)
 			#t4len2=unlist( lapply(1:length(t4) ,function(x) length(t4[[x]]))  )
 			 
 		 #cat("smalest shortest path found:",found,"\n")
-		subtrees= lapply(1:length(terminals),function(x) makesubtrees(x) )
-		#cat("subtrees until now:",subtrees,"\n")
-		nsubtrees =lapply(1:length(terminals),function(x) makensubtrees(x) )
-
+		 #we merge the terminals' subgraphs and their paths here
+		subtrees= lapply(1:length(subtrees),function(x) makesubtrees(x) )
+		#we delete  repeated subtrees here 	
+		#we presume here  length(subtrees) is more than 1
+         		i=1
+     		j=2
+     		while (i  <= ((length(subtrees)-1) ))
+     		{
+     			j=i+1
+	     			while(j  <= (length(subtrees) ) )
+     					{
+     					#cat(i,j,"inner loop", "\n")
+     					if(length(intersect( subtrees[[i]] , subtrees[[j]] )) >0)
+     						{
+		     				#cat("union place found:",subtrees[[i]] ," ",  subtrees[[j]],"\n")
+		     				subtrees[[i]] = union (subtrees[[i]] ,subtrees[[j]] )			     					
+		     				subtrees = subtrees[-j] 
+		     				j=j-1	
+     						}		
+	     		 		j=j+1
+	     		 		}
+			i=i+1	     	
+	 	    }			 
+		#cat("subtrees until now:",length(subtrees),"\n")
+		#nsubtrees =lapply(1:length(terminals),function(x) makensubtrees(x) )
+  		nsubtrees= lapply(1:length(subtrees),function(x) setdiff(terminals,subtrees[[x]]))
 	 }
 	 
-	 subtreegroup = sapply(1:length(terminals) ,function(x) all( is.element(terminals,intersect(subtrees[[x]],unlist(terminals)))))
-	 subtreenum= grep(TRUE,subtreegroup)[1]
-	 steinert= minimum.spanning.tree(subgraph(g,subtrees[[subtreenum]]))
+	# subtreegroup = sapply(1:length(terminals) ,function(x) all( is.element(terminals,intersect(subtrees[[x]],unlist(terminals)))))
+	 #subtreenum= grep(TRUE,subtreegroup)[1]
+	 #steinert= minimum.spanning.tree(subgraph(g,subtrees[[subtreenum]]))
+	 steinert= minimum.spanning.tree(subgraph(g,subtrees[[1]]))
 	 #here we delete nonterminal vertices that has degree of 1
 	 a=V(steinert)$color
-	b=igraph::degree(steinert, v=V(steinert), mode = c("all")) 
+	b=igraph0::degree(steinert, v=V(steinert), mode = c("all")) 
 	 a1=match(a,"yellow")
 	 b1=match(b,"1")
 	 opt= sapply(1:length(a1),function(r) (a1[r]*b1[r] ) )
@@ -689,7 +713,8 @@ steinertree3 <- function(labelcheck=TRUE,coloring=TRUE,ter_list=NULL,glist)
 	 if(coloring)
 	 {
 		V(g)$color="yellow"
-		V(g)[subtrees[[subtreenum]]]$color="green"
+		#V(g)[subtrees[[subtreenum]]]$color="green"
+		V(g)[subtrees[[1]]]$color="green"
 		V(g)[unlist(terminals)]$color="red"
 	 }
 	#-----------------to recover the real label:
@@ -829,7 +854,7 @@ steinertree8 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,ReturnAll
 	 steinert= minimum.spanning.tree(subgraph(g,queue[[1]]))
 	 #here we delete nonterminal vertices that has degree of 1
 	 a=V(steinert)$color
-	 b=igraph::degree(steinert, v=V(steinert), mode = c("all")) 
+	 b=igraph0::degree(steinert, v=V(steinert), mode = c("all")) 
 	 a1=match(a,"yellow")
 	 b1=match(b,"1")
 	 opt= sapply(1:length(a1),function(r) (a1[r]*b1[r] ) )
@@ -945,7 +970,7 @@ steinertree8 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,ReturnAll
 	 steinert= minimum.spanning.tree(subgraph(g,queue[[i]]))
 	 
 	 a=V(steinert)$color
-	 b=igraph::degree(steinert, v=V(steinert), mode = c("all")) 
+	 b=igraph0::degree(steinert, v=V(steinert), mode = c("all")) 
 	 a1=match(a,"yellow")
 	 b1=match(b,"1")
 	 opt= sapply(1:length(a1),function(r) (a1[r]*b1[r] ) )
@@ -1290,12 +1315,12 @@ steinertree <- function( type,coloring= FALSE,ter_list = NULL, enumerate= FALSE 
 	}
 
 	correct_type = FALSE	
-	if( type == "SPM" || type == "EXA" || type == "SP" || type == "RSP" || type == "KRU" ){
+	if( type == "SPM" || type == "EXA" || type == "SP" || type == "RSP" || type == "KB" ){
 	correct_type= TRUE
 	}
 	if(!correct_type)
 	{
-		print("Error, the input type is not correct; Choose one from SPM,EXA,SP,RSP,KRU.")
+		print("Error, the input type is not correct; Choose one from SPM,EXA,SP,RSP,KB.")
 		return()	
 	}
 	glist=c()
@@ -1305,7 +1330,7 @@ steinertree <- function( type,coloring= FALSE,ter_list = NULL, enumerate= FALSE 
 	 	result= steinertree2(labelcheck, coloring, ter_list, glist)
 	}
 
-	if (type == "KRU"){
+	if (type == "KB"){
 		result=steinertree3(labelcheck, coloring, ter_list, glist)
 	}
 

@@ -225,12 +225,12 @@ appr_tests= function(folder , experiments = NULL, listofterminaltest, repetition
 		 b=Sys.time()
 		 t3=b-a
 		 cat("runtime of test SP" ,i,j,"is", t3,units(t3),"\n")
-		 cat("runing of test ST3 \n")	 
-		 a=Sys.time()
-		 ST3=steinertree("KRU",FALSE,ter_list,FALSE,g)
-		 b=Sys.time()
-		 t4=b-a
-		 cat("runtime of test ST3" ,i,j,"is", t4,units(t4),"\n") 
+		 #cat("runing of test ST3 \n")	 
+		 #a=Sys.time()
+		 #ST3=steinertree("KRU",FALSE,ter_list,FALSE,g)
+		 #b=Sys.time()
+		 #t4=b-a
+		 #cat("runtime of test ST3" ,i,j,"is", t4,units(t4),"\n") 
 
 		 cat("runing of test ST4 appr steiner \n")
 		 a=Sys.time()
@@ -239,11 +239,12 @@ appr_tests= function(folder , experiments = NULL, listofterminaltest, repetition
 		 t5=b-a
 		 cat("runtime of test ST4" ,i,j,"is", t5,units(t5),"\n") 
 		
-		 runtimes=c(t3,t4,t5,units(t3),units(t4),units(t5))
+		 #runtimes=c(t3,t4,t5,units(t3),units(t4),units(t5))
+		 runtimes=c(t3,t5,units(t3),units(t5))
 		 cat("saving result data into time and steinter tree files... \n")
 	
 		 try({save(ST2, file = paste(folder,"/ST2",j,"of",i,".RData",sep=""))}, silent=FALSE)
-		 try({save(ST3, file = paste(folder,"/ST3",j,"of",i,".RData",sep=""))}, silent=FALSE)
+		# try({save(ST3, file = paste(folder,"/ST3",j,"of",i,".RData",sep=""))}, silent=FALSE)
 		 try({save(ST4, file = paste(folder,"/ST4",j,"of",i,".RData",sep=""))}, silent=FALSE)
 		 save(runtimes, file = paste(folder,"/runtimes",j,"of",i,".RData",sep=""))
 	}
@@ -251,10 +252,9 @@ appr_tests= function(folder , experiments = NULL, listofterminaltest, repetition
 #end of run test
 }
 
-
-asp_in_appr_tests= function(folder , experiments = NULL, listofterminaltest, repetition)
+#KB in COMPARISON OF  APPROXIMATE METHODS WITH EACH OTHER
+appr_KB_tests= function(folder , experiments = NULL, listofterminaltest, repetition)
 { 
-
  color=c()
  grw = c()
  ST1=ST2=ST3=ST4=c()
@@ -268,7 +268,38 @@ asp_in_appr_tests= function(folder , experiments = NULL, listofterminaltest, rep
 		 #for the case of speed g is not sent to the functions,but terminals are sent
 		 g<-grw[[1]]
 		 ter_list = V(g)[color=="red"]
-		 #the exact solution takes so much time for nodes bigger than 15
+		 cat("runing of test KB  j,i :",j,i," \n")	 
+		 a=Sys.time()
+		 ST3=steinertree("KB",FALSE,ter_list,FALSE,g)
+		 b=Sys.time()
+		 t4=b-a
+		 cat("runtime of test KB" ,j,i,"is", t4,units(t4),"\n") 
+ 		 load(paste(folder,"/g",j,"of",i,".RData",sep="")) 
+		 runtimes=c(t4,units(t4))
+		 cat("saving result data into time and steinter tree files... \n")
+		 try({save(ST3, file = paste(folder,"/STKB",j,"of",i,".RData",sep=""))}, silent=FALSE)
+		 save(runtimes, file = paste(folder,"/runtimesKB",j,"of",i,".RData",sep=""))
+	}
+  }	
+#end of run test
+}
+
+asp_in_appr_tests= function(folder , experiments = NULL, listofterminaltest, repetition)
+{ 
+
+ color=c()
+ grw = c()
+ ST1=ST2=ST3=ST4=c()
+ counter = experiments
+ if (is.null(experiments) ){ counter = 1:length(listofterminaltest) }
+ for(j in counter)#
+  { # j=5
+ 	for(i in 1:length(repetition) ) #in 43...
+ 	{
+ 		 load(paste(folder,"/g",j,"of",i,".RData",sep="")) 
+		 #for the case of speed g is not sent to the functions,but terminals are sent
+		 g<-grw[[1]]
+		 ter_list = V(g)[color=="red"]
 		 t3=0
 		g1 <- graph.empty()
 		subg=g
@@ -279,24 +310,30 @@ asp_in_appr_tests= function(folder , experiments = NULL, listofterminaltest, rep
 		terminals = V(subg)[color=="red"]
 		paths=lapply(terminals,function(x) (get.all.shortest.paths(g,x,terminals )) )
 		m=0
-		nodes=c()	 
+		nodes=c()
+		nodes=unique(unlist(paths))
+		paths=unlist(paths, recursive=FALSE)					
 		for (ii in 1:length(paths))
 				 {
-					 for (jj in 1:length(paths[[ii]]))
-						{
-						nodes=union(nodes,( unlist(paths[[ii]][[jj]])) )
-						len=length(as.character(unlist( paste( unlist(paths[[ii]][[jj]])) )  ,sep="") )
-						if (len > 1)	
-						   	 {
-						   	 	 count=len-1
-						    		for(kkk in 1:count) {subg=add.edges(subg,c(paths[[ii]][[jj]][kkk], paths[[ii]][[jj]][kkk+1]))}#constructing the subgraph by adding edges found in the shotest path to a graph that has the nodes
-							}	
-						}
+					# for (jj in 1:length(paths[[ii]]))
+						#{
+				#improvement:instead of adding edge by edge now we add path by path
+				subg=add.edges(subg,as.vector(aperm(get.edges(g,E(g, path= paths[[ii]])))))						
+						#nodes=union(nodes,( unlist(paths[[ii]][[jj]])) )
+						#len=length(as.character(unlist( paste( unlist(paths[[ii]][[jj]])) )  ,sep="") )
+						#if (len > 1)	
+						#   	 {
+						#   	 	 count=len-1
+						#    		for(kkk in 1:count) {subg=add.edges(subg,c(paths[[ii]][[jj]][kkk], paths[[ii]][[jj]][kkk+1]))}#constructing the subgraph by adding edges found in the shotest path to a graph that has the nodes
+						#	}	
+					#	}
 				 }
+		 subg=subgraph(subg,nodes)
 		 subg=simplify(subg, remove.multiple = TRUE, remove.loops = FALSE)
-		 nodes=unique(nodes)	 
-		 ver=nodes
-		  m=length(E(subg))	 	 
+		 #nodes=unique(nodes)	 
+		 #ver=nodes
+		 ver=V(subg)
+		 m=length(E(subg))	 	 
  	         #m is the number of uniq edges all shortest paths
 		 b=Sys.time()
 		 t3 =b-a
@@ -304,7 +341,7 @@ asp_in_appr_tests= function(folder , experiments = NULL, listofterminaltest, rep
 		 try({save(subg,m,ver, file = paste(folder,"/ALPH",j,"of",i,".RData",sep=""))}, silent=FALSE)
 		 save(runtimes, file = paste(folder,"/runtimesAL",j,"of",i,".RData",sep=""))
 	}
-  }	
+  }  #	
 #end of run test
 
 }
@@ -473,10 +510,15 @@ steiner_simulation=function(test,listofterminaltest,repetition,testfolder = NULL
 		if(is.null(testfolder)) testfolder= "steinerdata"
 	        asp_in_appr_tests(testfolder,counter,listofterminaltest,repetition)
 	}
-
-
+	if(test== "KB_app"){
+		#adding the multi steiner algorithm results on simulation data for sake of comarison with other approximation algorithms
+		if(is.null(listofterminaltest))counter = 1:5
+		if(!is.null(listofterminaltest))counter = 1:length(listofterminaltest)
+		if(is.null(testfolder)) testfolder= "steinerdata"
+	        appr_KB_tests(testfolder,counter,listofterminaltest,repetition)
+	}
 }
-# smaple :  steiner_simulation("asp_app", c(5,8,15,50,70) ,repetition)
+# sample :  steiner_simulation("asp_app", c(5,8,15,50,70) ,repetition, "steinerdata")
 
 
 

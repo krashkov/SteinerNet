@@ -26,11 +26,11 @@ steinertree(type, coloring = FALSE, ter_list = NULL, enumerate = FALSE, graph)
 \details{
 This function withholds six steiner tree algorithms for networks.
 type specifes the steiner algorithm to deploy to the input graph and terminal set. 
-\code{type} can be SP, KRU, RSP, EXA or SPM. The explanation of the abbreviations is listed below.
+\code{type} can be SP, KB, RSP, EXA or SPM. The explanation of the abbreviations is listed below.
 
 	\code{SP} refers to the shortest path heuristic algorithm. [1,2]
 	
-	\code{KRU} exerts to Kruskal-Based Heuristic algorithm. [3]
+	\code{KB} exerts to Kruskal-Based Heuristic algorithm. [3]
 	
 	\code{RSP} exerts a random approximation algorithm developed by the package developers. [4]
 	
