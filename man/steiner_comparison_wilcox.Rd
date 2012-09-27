@@ -1,16 +1,16 @@
 
-\name{steiner_comparison_plots}
-\alias{steiner_comparison_plots}
-\alias{steiner_comparison_plots, character, character , character, list, list}
-\alias{steiner_comparison_plots, character, character, missing, list, list}
-\alias{steiner_comparison_plots, character, character, character, missing, missing}
-\alias{steiner_comparison_plots, character, character, missing, missing, missing}
-\alias{steiner_comparison_plots, character, missing, missing, missing, missing}
+\name{steiner_comparison_wilcox}
+\alias{steiner_comparison_wilcox}
+\alias{steiner_comparison_wilcox, character, character , character, list, list}
+\alias{steiner_comparison_wilcox, character, character, missing, list, list}
+\alias{steiner_comparison_wilcox, character, character, character, missing, missing}
+\alias{steiner_comparison_wilcox, character, character, missing, missing, missing}
+\alias{steiner_comparison_wilcox, character, missing, missing, missing, missing}
 
-\title{steiner_comparison_plots}
-\description{This function plots the comparison results of Steiner tree algorithms excutions on simulated data.}
+\title{steiner_comparison_wilcox}
+\description{This function stores the wilcox comparison results of Steiner tree algorithms excutions in RData files.}
 \usage{
-steiner_comparison_plots (test_name, test_folder =NULL, outputname = NULL, listofterminaltest = NULL ,repetition= NULL)
+steiner_comparison_wilcox (test_name, test_folder =NULL, outputname = NULL, listofterminaltest = NULL ,repetition= NULL)
 }
 
 \arguments{
@@ -75,7 +75,7 @@ The function stores a resulted plot in a PDF file.
  g <- graph.ring(10)
  #generate_st_samples("exact", g, "testfolder", c(2,3), c(.8,.8))
  #steiner_simulation("exact", "testfolder", c(2,3), c(.8,.8))
- #steiner_comparison_plots ("exact", "testfolder", c(2,3), c(.8,.8))
+ #steiner_comparison_wilcox ("exact", "testfolder", c(2,3), c(.8,.8))
 }
 \keyword{graphs, protein interaction, network, graph, steiner tree}
 

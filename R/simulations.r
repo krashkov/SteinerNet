@@ -351,7 +351,8 @@ exact_tests= function(folder, experiments= NULL, listofterminaltest, repetition 
 {
   color=c()
   grw=c()
-  ST1=ST2=ST3=ST4=SPM=EXA=t2=c()
+  ST1=ST2=ST3=ST4=SPM=EXA=c()
+  t1=t2=t3=t4=t5=t6=0
   counter = experiments
   if (is.null(experiments) ){ counter = 1:length(listofterminaltest) }
   for(j in counter)
@@ -362,6 +363,7 @@ exact_tests= function(folder, experiments= NULL, listofterminaltest, repetition 
 		#for the case of speed g is not sent to the functions,but terminals are sent
 		g<-grw[[1]]
 		ter_list = V(g)[color=="red"]
+		#cat(length(V(g))," \n")
 		#the exact solution takes so much time for nodes bigger than 15
 		t1=0
 		cat("runing of test Seiner Tree Exact solution.. \n")
@@ -375,37 +377,37 @@ exact_tests= function(folder, experiments= NULL, listofterminaltest, repetition 
 		a=Sys.time()
 		ST2=steinertree("SP", NULL, g, FALSE, FALSE)
 		b=Sys.time()
-		t3=b-a
-		cat("runtime of test ST2" ,i,j,"is", t3,units(t3)," and the steiner tree size is ",length(E(ST2[[1]])),"\n")
-		cat("Executing  ST3 test \n")	 
-		a=Sys.time()
-		ST3=steinertree("KRU", NULL, g, FALSE, FALSE)
-		b=Sys.time()
-		t4=b-a
-		cat("runtime of test ST3" ,i,j,"is", t4,units(t4)," and the steiner tree size is ",length(E(ST3[[1]])),"\n")  
-		cat("Executing ST4 appr steiner test \n")
-		a=Sys.time()
-		ST4=steinertree("RSP", NULL, g, FALSE, FALSE) #269 biggest num of V when 100 terminals and 13500 was the size
-		b=Sys.time()
-		t5=b-a
-		cat("runtime of test ST4 approximation alg" ,i,j,"is", t5,units(t5)," and the steiner tree size is ",length(E(ST4[[1]])),"\n") 
-		cat("Executing  SPM appr steiner test \n")
-		a=Sys.time()
-		SPM=steinertree("SPM", NULL, g, FALSE, FALSE)
-		b=Sys.time()
-		t6=b-a
-		if (class(SPM[[1]])== "igraph" ){cat("runtime of test SPM" ,i,j,"is", t1,units(t1)," and the steiner tree size is ",length(E(SPM[[1]])),"\n")	}	    
-		if (class(SPM[[1]])== "list" ){cat("runtime of test SPM" ,i,j,"is", t1,units(t1)," and the steiner tree size is ",length(E(SPM[[1]][[1]])) , "a list of  " ,length(SPM[[1]]) , " ST trees",  "\n")	}	    
+		t2=b-a
+		cat("runtime of test ST2" ,i,j,"is", t2,units(t2)," and the steiner tree size is ",length(E(ST2[[1]])),"\n")
+		#cat("Executing  ST3 test \n")	 
+		#a=Sys.time()
+		#ST3=steinertree("KRU", NULL, g, FALSE, FALSE)
+		#b=Sys.time()
+		#t4=b-a
+		#cat("runtime of test ST3" ,i,j,"is", t4,units(t4)," and the steiner tree size is ",length(E(ST3[[1]])),"\n")  
+		#cat("Executing ST4 appr steiner test \n")
+		#a=Sys.time()
+		#ST4=steinertree("RSP", NULL, g, FALSE, FALSE) #269 biggest num of V when 100 terminals and 13500 was the size
+		#b=Sys.time()
+		#t5=b-a
+		#cat("runtime of test ST4 approximation alg" ,i,j,"is", t5,units(t5)," and the steiner tree size is ",length(E(ST4[[1]])),"\n") 
+		#cat("Executing  SPM appr steiner test \n")
+		#a=Sys.time()
+		#SPM=steinertree("SPM", NULL, g, FALSE, FALSE)
+		#b=Sys.time()
+		#t6=b-a
+		#if (class(SPM[[1]])== "igraph" ){cat("runtime of test SPM" ,i,j,"is", t1,units(t1)," and the steiner tree size is ",length(E(SPM[[1]])),"\n")	}	    
+		#if (class(SPM[[1]])== "list" ){cat("runtime of test SPM" ,i,j,"is", t1,units(t1)," and the steiner tree size is ",length(E(SPM[[1]][[1]])) , "a list of  " ,length(SPM[[1]]) , " ST trees",  "\n")	}	    
 	
- 	         #--------------------------------------------------------------	
-
-		 runtimes=c(t1,t2,t3,t4,t5,t6,units(t1),units(t2),units(t3),units(t4),units(t5),units(t6))
+ 	       #--------------------------------------------------------------	
+		runtimes=c(t1,t2,units(t1),units(t2))
+		#runtimes=c(t1,t2,t3,t4,t5,t6,units(t1),units(t2),units(t3),units(t4),units(t5),units(t6))
 		 cat("saving result data into time and steinter tree files... \n")
  	   	 try({save(EXA, file = paste(folder,"/EXA",j,"of",i,".RData",sep=""))}, silent=FALSE)
 		 try({save(ST2, file = paste(folder,"/ST2",j,"of",i,".RData",sep=""))}, silent=FALSE)
-		 try({save(ST3, file = paste(folder,"/ST3",j,"of",i,".RData",sep=""))}, silent=FALSE)
-		 try({save(ST4, file = paste(folder,"/ST4",j,"of",i,".RData",sep=""))}, silent=FALSE)
-		 try({save(SPM, file = paste(folder,"/SPM",j,"of",i,".RData",sep=""))}, silent=FALSE)
+		 #try({save(ST3, file = paste(folder,"/ST3",j,"of",i,".RData",sep=""))}, silent=FALSE)
+		 #try({save(ST4, file = paste(folder,"/ST4",j,"of",i,".RData",sep=""))}, silent=FALSE)
+		 #try({save(SPM, file = paste(folder,"/SPM",j,"of",i,".RData",sep=""))}, silent=FALSE)
 		 save(runtimes, file = paste(folder,"/runtimes",j,"of",i,".RData",sep=""))
 	}
   }	
@@ -471,10 +473,19 @@ generate_st_samples= function(test, graph, folder= NULL,listofterminaltest,repet
 		gensample(folder,TRUE,graph,listofterminaltest,repetition) #we make smaller graphs for exact experiments
 		}
 	if(test=="appr"){
-		#for comparison of approximation graphs
+		#for comparison of approximation algorithms
 		if(is.null(folder)) folder= "steinerdata"
 		gensample(folder,FALSE,graph,listofterminaltest,repetition) 
 	}
+
+	if(test=="enum"){
+		#for comparison of enumerative akgorithms
+		if(is.null(folder)) folder= "steinerdataEnum"
+		gensample(folder,TRUE,graph,listofterminaltest,repetition) #we make smaller graphs for exact experiments
+
+	}
+
+
 }
 
 steiner_simulation=function(test,listofterminaltest,repetition,testfolder = NULL)

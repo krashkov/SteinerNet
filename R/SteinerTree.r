@@ -1036,7 +1036,7 @@ Merge_Steiner = function(glist)
 
 	if(length(MStree) > 1){ 
 	 	for (i  in 2:length(MStree) ){
-		 merged= igraph0::join(merged,igraph.to.graphNEL(MStree[[i]]))	
+		 merged= graph::join(merged,igraph.to.graphNEL(MStree[[i]]))	
 	 	}		
 	}
 	return(igraph.from.graphNEL(merged))
@@ -1368,7 +1368,7 @@ steinertree <- function( type, ter_list = NULL, graph, enumerate= FALSE  ,colori
 	}
 
 	if (type == "EXA"){
-		 	result=steinerexact(labelcheck, coloring, ter_list, enumerate, glist)
+			result=steinerexact(labelcheck, coloring, ter_list, enumerate, glist)
 		 	if (enumerate){
 				glist[[2]]=result
 		 		result = Merge_Steiner(glist)

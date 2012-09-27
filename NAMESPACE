@@ -1,4 +1,4 @@
 import(RBGL,igraph0)
 import(limma)
-export(steinertree, steiner_comparison_plots, generate_st_samples, steiner_simulation)
+export(steinertree, generate_st_samples, steiner_simulation, steiner_comparison_plots , steiner_comparison_wilcox)
 

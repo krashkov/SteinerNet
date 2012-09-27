@@ -73,9 +73,6 @@ steinertestplot_appr_dens_e  = function(testfolder , outputname , incldue_exact_
 	dev.off()
 }
 
-
-
-
 steinertestplot_exact_dens_e  = function(testfolder , outputname , incldue_exact_sol,experiments= NULL,  listofterminaltest = NULL ,repetition= NULL)
 {
   incldue_exact_sol = TRUE
@@ -257,6 +254,10 @@ steinertestplot_mul_dens_e  = function(testfolder , outputname , incldue_exact_s
 	dev.off()
 }
 
+
+
+
+
 steinertestplot_org_dens_e = function(testfolder , outputname , incldue_exact_sol,experiments= NULL , listofterminaltest = NULL ,repetition= NULL)
 {
   incldue_exact_sol = TRUE
@@ -437,6 +438,8 @@ steinertest_median_node_edge_mul_venn  = function(testfolder , outputname , incl
 }
 
 
+
+
 #---------------------------------------------------------------------------------------------------------------------------------------
 steinertestplot_exact  = function(test_folder , outputname , incldue_exact_sol,experiments= NULL, listofterminaltest = NULL ,repetition= NULL)
 {
@@ -596,12 +599,12 @@ steinertestplot_exact_sp  = function(test_folder , outputname , incldue_exact_so
 			 #if(length(V(grw[[1]])) < 23 )  # we will not include it inside when j>2 becasue sometimes the nodes are more and some times less than 23 when j=3 
 			load(paste(test_folder,"/g",j,"of",i,".RData",sep=""))
 			cat("num ",length(V(grw[[1]]))," of vertices of graph having exact steiner tree in",j,"of",i ,"SFX file \n")
-			load(paste(test_folder,"/STX",j,"of",i,".RData",sep=""))
-			ve <- length(V(STX[[1]]))
-			ee <- length(E(STX[[1]]))
+			load(paste(test_folder,"/EXA",j,"of",i,".RData",sep=""))
+			ve <- length(V(EXA[[1]]))
+			ee <- length(E(EXA[[1]]))
 			size_list_0[length( size_list_0)+1]=ee
 			
-			time_list_1[length( time_list_1)+1]=time_norm(runtimes[1],runtimes[7] ) 
+			time_list_1[length( time_list_1)+1]=time_norm(runtimes[1],runtimes[3] ) 
 						  
 			alg_list_1 [length(alg_list_1)+1] = "Exact"
 			alg_list_0 [length(alg_list_0)+1] = "Exact"
@@ -611,7 +614,7 @@ steinertestplot_exact_sp  = function(test_folder , outputname , incldue_exact_so
 			 v2= length(V(ST2[[1]]))
 			 e2= length(E(ST2[[1]]))
 			 size_list_0[length( size_list_0)+1]=e2 
-			 time_list_1[length( time_list_1)+1]=time_norm(runtimes[3],runtimes[9])
+			 time_list_1[length( time_list_1)+1]=time_norm(runtimes[2],runtimes[4])
 			 alg_list_0 [length(alg_list_0)+1] = "SP"
 			 alg_list_1 [length(alg_list_1)+1] = "SP"
 
@@ -635,8 +638,6 @@ steinertestplot_exact_sp  = function(test_folder , outputname , incldue_exact_so
 		dev.off()
 }
 
-#show the range of v and size of each experiment
-#show approximation ratio in each experiment
 
 steinertestplot_exact_sp_e_dens  = function(test_folder , outputname , incldue_exact_sol,experiments= NULL, listofterminaltest = NULL ,repetition= NULL)
 {
@@ -681,9 +682,9 @@ steinertestplot_exact_sp_e_dens  = function(test_folder , outputname , incldue_e
 			 #if(length(V(grw[[1]])) < 23 )  # we will not include it inside when j>2 becasue sometimes the nodes are more and some times less than 23 when j=3 
 			load(paste(test_folder,"/g",j,"of",i,".RData",sep=""))
 			cat("num ",length(V(grw[[1]]))," of vertices of graph having exact steiner tree in",j,"of",i ,"SFX file \n")
-			load(paste(test_folder,"/STX",j,"of",i,".RData",sep=""))
-			ve <- length(V(STX[[1]]))
-			ee <- length(E(STX[[1]]))
+			load(paste(test_folder,"/EXA",j,"of",i,".RData",sep=""))
+			ve <- length(V(EXA[[1]]))
+			ee <- length(E(EXA[[1]]))
 			size_list_0[length( size_list_0)+1]= (2*ee)/(ve*(ve-1))
 			alg_list_0 [length(alg_list_0)+1] = "Exact"
 				 
@@ -901,6 +902,7 @@ steinertestplot_org_node = function(test_folder , outputname , incldue_exact_sol
 
 
 
+
 steinertestplot_appr  = function(test_folder , outputname , incldue_exact_sol,experiments= NULL, listofterminaltest = NULL ,repetition= NULL)
 {
 	  incldue_exact_sol = FALSE
@@ -1026,6 +1028,11 @@ time_norm2 = function(value,type)
 	ret=(num)
 	return (ret)
 }
+
+
+
+
+
 
 steinertestplot_appr2  = function(test_folder , outputname , incldue_exact_sol,experiments= NULL, listofterminaltest = NULL ,repetition= NULL)
 {
@@ -1206,6 +1213,9 @@ steinertestplot_mul_dens  = function(test_folder , outputname , incldue_exact_so
 		dev.off()
 }
 
+
+
+
 #------------------------dense plots
 #This function creates the dens plots 
 steinertestplot_appr_dens  = function(test_folder , outputname , incldue_exact_sol,experiments= NULL, listofterminaltest = NULL ,repetition= NULL)
@@ -1277,8 +1287,6 @@ steinertestplot_appr_dens  = function(test_folder , outputname , incldue_exact_s
 
 		dev.off()
 }
-
-
 
 
 steinertestplot_exact_dens  = function(test_folder , outputname , incldue_exact_sol,experiments= NULL, listofterminaltest = NULL ,repetition= NULL)
@@ -1421,9 +1429,9 @@ steinertestplot_exact_dens_sp  = function(test_folder , outputname , incldue_exa
 			 #if(length(V(grw[[1]])) < 23 )  # we will not include it inside when j>2 becasue sometimes the nodes are more and some times less than 23 when j=3 
 			load(paste(test_folder,"/g",j,"of",i,".RData",sep=""))
 			cat("num ",length(V(grw[[1]]))," of vertices of graph having exact steiner tree in",j,"of",i ,"SFX file \n")
-			load(paste(test_folder,"/STX",j,"of",i,".RData",sep=""))
-			ve <- length(V(STX[[1]]))
-			ee <- length(E(STX[[1]]))
+			load(paste(test_folder,"/EXA",j,"of",i,".RData",sep=""))
+			ve <- length(V(EXA[[1]]))
+			ee <- length(E(EXA[[1]]))
 			size_list_0[length( size_list_0)+1]=listofterminaltest[j]/ve
 			alg_list_0 [length(alg_list_0)+1] = "Exact"		
 					 
@@ -1456,7 +1464,7 @@ steiner_comparison_plots = function (test_name, test_folder= NULL, outputname = 
 			if (is.null(outputname)) outputname = "timesizeplot-Exact.pdf"
 			incldue_exact_sol = TRUE
 			experiments= 1:2
-			steinertestplot_exact (test_folder , outputname , incldue_exact_sol, experiments, listofterminaltest ,repetition)
+			steinertestplot_exact (test_folder , outputname , incldue_exact_sol, experiments, listofterminaltest , repetition)
 			}
 			
 		 if(test_name=="exact-sp"){
@@ -1464,15 +1472,15 @@ steiner_comparison_plots = function (test_name, test_folder= NULL, outputname = 
 			if (is.null(outputname)) outputname = "timesizeplot-Exact-sp.pdf"
 			incldue_exact_sol = TRUE
 			experiments= 1:2
-			steinertestplot_exact_sp (test_folder , outputname , incldue_exact_sol, experiments, listofterminaltest ,repetition)
+			steinertestplot_exact_sp (test_folder , outputname , incldue_exact_sol, experiments, listofterminaltest , repetition)
 			}
 			
-			 if(test_name=="exact-sp-edge-dens"){
+		 if(test_name=="exact-sp-edge-dens"){
 			if (is.null(test_folder)) test_folder = "steinerdata2"
 			if (is.null(outputname)) outputname = "timesizeplot-Exact-sp-edge-dens.pdf"
 			incldue_exact_sol = TRUE
 			experiments= 1:2
-			steinertestplot_exact_sp_e_dens (test_folder , outputname , incldue_exact_sol, experiments, listofterminaltest ,repetition)
+			steinertestplot_exact_sp_e_dens (test_folder , outputname , incldue_exact_sol, experiments, listofterminaltest , repetition)
 			}
 		
 		  if(test_name=="appr"){
@@ -1481,15 +1489,16 @@ steiner_comparison_plots = function (test_name, test_folder= NULL, outputname = 
 			if (is.null(outputname)) outputname = "timesizeplot-app.pdf"
 			incldue_exact_sol = FALSE
 			experiments= 1:5
-			steinertestplot_appr (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+			steinertestplot_appr (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
+			
 		if(test_name=="appr-time-chart"){
 			#second experimant comparison of approximation algorithms:
 			if (is.null(test_folder)) test_folder = "steinerdata"
 			if (is.null(outputname)) outputname = "time-chart-app.pdf"
 			incldue_exact_sol = FALSE
 			experiments= 1:5
-			steinertestplot_appr2 (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+			steinertestplot_appr2 (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
 			
 		 if(test_name=="Enum"){
@@ -1498,9 +1507,8 @@ steiner_comparison_plots = function (test_name, test_folder= NULL, outputname = 
 			if (is.null(outputname)) outputname = "timesizeplot-mul.pdf"
 			incldue_exact_sol = TRUE
 			experiments= 1:2
-			steinertestplot_mul (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+			steinertestplot_mul (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
-
 				
 		if(test_name=="Enum-median-venn-node-edge"){
 			#comparison of Steiner tree enumeration  algorithms
@@ -1508,7 +1516,7 @@ steiner_comparison_plots = function (test_name, test_folder= NULL, outputname = 
 			if (is.null(outputname)) outputname = "venn-median-mul.pdf"
 			incldue_exact_sol = TRUE
 			experiments= 1:2
-		          steinertest_median_node_edge_mul_venn (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+		          steinertest_median_node_edge_mul_venn (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
 			
 		 if(test_name=="org"){
@@ -1517,7 +1525,7 @@ steiner_comparison_plots = function (test_name, test_folder= NULL, outputname = 
 			if (is.null(outputname)) outputname = "sizeplot-org.pdf"
 			incldue_exact_sol = TRUE
 			experiments= 1:2
-			steinertestplot_org (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+			steinertestplot_org (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
 		 if(test_name=="org-nodes"){
 			# comparison of random trees for the exact test
@@ -1525,7 +1533,7 @@ steiner_comparison_plots = function (test_name, test_folder= NULL, outputname = 
 			if (is.null(outputname)) outputname = "nodeplot-org.pdf"
 			incldue_exact_sol = TRUE
 			experiments= 1:2
-			steinertestplot_org_node (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+			steinertestplot_org_node (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
 
 		 if(test_name=="org-dens-e"){
@@ -1534,7 +1542,7 @@ steiner_comparison_plots = function (test_name, test_folder= NULL, outputname = 
 			if (is.null(outputname)) outputname = "dens-org-e.pdf"
 			incldue_exact_sol = TRUE
 			experiments= 1:2
-			steinertestplot_org_dens_e (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+			steinertestplot_org_dens_e (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
 
 		 if(test_name=="appr-vfreq"){
@@ -1543,7 +1551,7 @@ steiner_comparison_plots = function (test_name, test_folder= NULL, outputname = 
 			if (is.null(outputname)) outputname = "vfreqplot-app.pdf"
 			incldue_exact_sol = FALSE
 			experiments= 1:5
-			steinertestplot_appr_dens (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+			steinertestplot_appr_dens (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
 
 		  if(test_name=="exact-vfreq"){
@@ -1552,23 +1560,25 @@ steiner_comparison_plots = function (test_name, test_folder= NULL, outputname = 
 			if (is.null(outputname)) outputname = "vfreqplot-exact.pdf"
 			incldue_exact_sol = TRUE
 			experiments= 1:2
-			steinertestplot_exact_dens (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+			steinertestplot_exact_dens (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
+
 		  if(test_name=="exact-vfreq-sp"){
 			#second experimant comparison of approximation algorithms:
 			if (is.null(test_folder)) test_folder = "steinerdata2"
 			if (is.null(outputname)) outputname = "vfreqplot-exact-sp.pdf"
 			incldue_exact_sol = TRUE
 			experiments= 1:2
-			steinertestplot_exact_dens_sp (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+			steinertestplot_exact_dens_sp (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
+
 		if(test_name=="Enum-vfreq"){
 			#second experimant comparison of approximation algorithms:
 			if (is.null(test_folder)) test_folder = "steinerdataEnum"
 			if (is.null(outputname)) outputname = "vfreqplot-Enum.pdf"
 			incldue_exact_sol = TRUE
 			experiments= 1:2
-			steinertestplot_mul_dens(test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+			steinertestplot_mul_dens(test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
 
 		 if(test_name=="appr-density-e"){
@@ -1577,16 +1587,16 @@ steiner_comparison_plots = function (test_name, test_folder= NULL, outputname = 
 			if (is.null(outputname)) outputname = "densityplot-app-e.pdf"
 			incldue_exact_sol = FALSE
 			experiments= 1:5
-			steinertestplot_appr_dens_e (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+			steinertestplot_appr_dens_e (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
 
-		  if(test_name=="exact-density-e"){
+		 if(test_name=="exact-density-e"){
 			#second experimant comparison of approximation algorithms:
 			if (is.null(test_folder)) test_folder = "steinerdata2"
 			if (is.null(outputname)) outputname = "densityplot-exact-e.pdf"
 			incldue_exact_sol = TRUE
 			experiments= 1:2
-			steinertestplot_exact_dens_e (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+			steinertestplot_exact_dens_e (test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
 
 		if(test_name=="Enum-density-e"){
@@ -1595,9 +1605,10 @@ steiner_comparison_plots = function (test_name, test_folder= NULL, outputname = 
 			if (is.null(outputname)) outputname = "densityplot-Enum-e.pdf"
 			incldue_exact_sol = TRUE
 			experiments= 1:2
-			steinertestplot_mul_dens_e(test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest ,repetition)
+			steinertestplot_mul_dens_e(test_folder , outputname , incldue_exact_sol,experiments, listofterminaltest , repetition)
 			}
 
 }
+
 #listofterminaltest=c(5,8,15,50,70)   #for approximate allgoritm comparisons 
 #listofterminaltest=c(5,8)   #for exact allgoritm comparisons 
