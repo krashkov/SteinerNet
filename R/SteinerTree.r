@@ -1,5 +1,7 @@
 ####################################################################################################################
-# 19 sep 2012
+# 21 Nov 2017
+#
+#  update version 1.4 to work with igraph package
 #
 #This approximation heuristic is inspired from one steiner heuristic but developed according to steiner trees on graph network 
 #
@@ -23,56 +25,49 @@ appr_steiner = function(runtime=5, labelcheck=TRUE, coloring= TRUE,  ter_list=NU
 	 #-----------------------------label checking in the begining and end to make sure the graph is correctly labeled and if not label them in here
 	 if(!is.null(ter_list)) 
 	  {
-		 V(g)$color="yellow"
+		 igraph::V(g)$color="yellow"
 		 V(g)[ter_list]$color="red"
 	  }
-
-	 if(labelcheck){
-		labels=c(V(g)$label) #list of vertices
-		names= c(V(g)$name)
-
-		if(is.null(labels) && is.null(names))   {    #if graph has not labels make labels for it
-		  	r0 =0:(length(V(g))-1)
-		 	 g[[9]][[3]]$label=sapply (r0 ,function(r0) toString(r0) )
-		 	 labels= g[[9]][[3]]$label
-		}
-
-		if(is.null(labels) && !is.null(names)){
-			g[[9]][[3]]$label = g[[9]][[3]]$name
-			labels=names
-		}
-
-		if(!is.null(labels) && is.null(names)){
-			g[[9]][[3]]$name = g[[9]][[3]]$label
-			names=labels
-		}
-
-		
-		len=length(labels)
-		r0 =1:(len)
-		t =sapply (r0 ,function(r0) toString(labels[r0]) )
-		temp= g[[9]][[3]]$name  #subgraph function was crashing if labels were alphabetic ,so here we keep a copy of them 
-					#and work with the index of vertices instead
-		g[[9]][[3]]$label=r0
-		g[[9]][[3]]$name=r0
-	 }
-	 #--------------------------------
+	#-----------------------------label checking in the begining and end to make sure the graph is correctly labeled and if not label them in here
+	if(labelcheck){
+	  labels=c(igraph::V(g)$label) #list of vertices
+	  names= c(igraph::V(g)$name)
+	  
+	  if(is.null(labels) && is.null(names))   {    #if graph has not labels make labels for it
+	    r0 =1:(length(V(g)))
+	    igraph::V(g)$label=sapply (r0 ,function(r0) toString(r0) )
+	    labels=  igraph::V(g)$label
+	  }
+	  
+	  if(is.null(labels) && !is.null(names)){
+	    igraph::V(g)$label = igraph::V(g)$name
+	    labels=names
+	  }
+	  
+	  if(!is.null(labels) && is.null(names)){
+	    igraph::V(g)$name =  igraph::V(g)$label
+	    names=labels
+	  }
+	  
+	  len=length(labels)
+	  r0 =1:(len)
+	  t =sapply (r0 ,function(r0) toString(labels[r0]) )
+	  temp= igraph::V(g)$name  #subgraph function was crashing if labels were alphabetic ,so here we keep a copy of them and work with the index of vertices instead
+	  igraph::V(g)$label=r0
+	  igraph::V(g)$name=r0
+	}
+	#--------------------------------
  	 terminals = V(g)[color=="red"]
 	 set=c()
-
-	 paths=lapply(terminals,function(x) get.all.shortest.paths(g,x,terminals ))
-
+	 paths=lapply(terminals,function(x) get.all.shortest.paths(g,x,terminals )$res)
 	 r=1:length(paths)
-	 t1=lapply(paths,length)
+	 t1=lapply(r,function(r) length(paths))
 	 distances= lapply(r,function(r) lapply(1:t1[[r]],function(x,y) length(paths[[y]][[x]]),y=r ))
 	 neighbour_distance= max(unlist(distances))
-
-		#paths= unique (unlist(E(minimum.spanning.tree(subgraph(g,(unique(unlist((paths)))))))))
-
+	 #paths= unique (unlist(E(minimum.spanning.tree(subgraph(g,(unique(unlist((paths)))))))))
 	 paths= unique(unlist(paths))
-
-	 set=paths
-	 size=length(E(minimum.spanning.tree(subgraph(g,union(terminals,set)))))
+	 set=V(g)[paths]
+	 size=length(E(minimum.spanning.tree(induced_subgraph(g,union(terminals,set)))))
 	 #a=Sys.time()
 	 #b=Sys.time()
 	 j=0
@@ -89,9 +84,10 @@ appr_steiner = function(runtime=5, labelcheck=TRUE, coloring= TRUE,  ter_list=NU
 		 {
 			seed=sample(unlist(neighborhood(g, neighbour_distance, nodes=terminals, mode="all")),1, replace = TRUE, prob = NULL)
 			paths2= get.all.shortest.paths(g,seed,terminals )
+			paths2 = paths2$res
 			seedpaths=unique(unlist(paths2))
-			set2=union(set,seedpaths)
-			size2=length(E(minimum.spanning.tree(subgraph(g,union(terminals,set2)))))
+			set2=union(set,V(g)[seedpaths])
+			size2=length(E(minimum.spanning.tree(induced_subgraph(g,union(terminals,set2)))))
 			if(size2<size){
 				if(printworkflow){
 					cat("found addive",seed ,"\n",sep=" ")
@@ -102,9 +98,9 @@ appr_steiner = function(runtime=5, labelcheck=TRUE, coloring= TRUE,  ter_list=NU
 			b=Sys.time()
 
 			seed=sample(set,1, replace = TRUE, prob = NULL)
-			set2=setdiff(set,seed)
-			size2=length(E(minimum.spanning.tree(subgraph(g,union(terminals,set2)))))
-			if(size2<size && is.connected(minimum.spanning.tree(subgraph(g,union(terminals,set2))))){
+			set2=V(g)[setdiff(set,seed)]
+			size2=length(E(minimum.spanning.tree(induced_subgraph(g,union(terminals,set2)))))
+			if(size2<size && is.connected(minimum.spanning.tree(induced_subgraph(g,union(terminals,set2))))){
 				size<-size2		
 				set <-set2
 				if(printworkflow){
@@ -117,10 +113,10 @@ appr_steiner = function(runtime=5, labelcheck=TRUE, coloring= TRUE,  ter_list=NU
 			i=i+1
 		 }
 	 }
-	 steinert=(minimum.spanning.tree(subgraph(g,union(terminals,set))))
+	 steinert=(minimum.spanning.tree(induced_subgraph(g,union(terminals,set))))
 	 #here we delete nonterminal vertices that has degree of 1
 	 	 a=V(steinert)$color
-		 b=igraph0::degree(steinert, v=V(steinert), mode = c("all")) 
+		 b=igraph::degree(steinert, v=V(steinert), mode = c("all")) 
 		 a1=match(a,"yellow")
 		 b1=match(b,"1")
 		 opt= sapply(1:length(a1),function(r) (a1[r]*b1[r] ) )
@@ -129,13 +125,13 @@ appr_steiner = function(runtime=5, labelcheck=TRUE, coloring= TRUE,  ter_list=NU
 	 #one of R problems is that if you sent a graph as output of a function it would miss
 	 #meta infomration about labels so I put it inside a list and return the list instead
 	 if(labelcheck){
-		g[[9]][[3]]$label=temp
-		g[[9]][[3]]$name= temp
+		igraph::V(g)$label=temp
+		igraph::V(g)$name= temp
 		labellist=c()
 		r0 =1:(length(V(steinert)))
-		labellist =sapply (r0 ,function(r0) temp[ as.integer(steinert[[9]][[3]]$label[r0])] )
-		steinert[[9]][[3]]$label=labellist
-		steinert[[9]][[3]]$name=labellist
+		labellist =sapply (r0 ,function(r0) temp[ as.integer(V(steinert)$label[r0])] )
+		V(steinert)$label=labellist
+		V(steinert)$name=labellist
 	 }
 	 glst=c()
 	 if(coloring)
@@ -166,7 +162,7 @@ appr_steiner = function(runtime=5, labelcheck=TRUE, coloring= TRUE,  ter_list=NU
 #	there is a problem in 1-steiner algorithm above(said by mattias haubtman),and that is it assuming that 
 #	the minimum spanning three algorithm returns the the nodes between terminals ,(is connected),but if it was this way 
 #	the mst would return the steiner 	tree ,not mst
-#	the function subgraph is only adding the edges that are between the corrent number of vertices.
+#	the function induced_subgraph is only adding the edges that are between the corrent number of vertices.
 #
 #	so algorithm  above can be used to enhance the result of other steiner tree algorithm,if instead of the terminals we put the result
 #	steiner tree  but cannot be run alone
@@ -212,8 +208,9 @@ appr_steiner = function(runtime=5, labelcheck=TRUE, coloring= TRUE,  ter_list=NU
 
 #with coloring=1 it reutuns also the original graph with colored stiner tree nodes
 #g is a graph
-steinertree1 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,glist)
+steinertree1 <- function(labelcheck = TRUE, coloring = TRUE, ter_list = NULL, glist)
 {
+   name <- NULL
  	 color=c()	
 	 graph= glist[[1]]
 	 if (!is.null(graph))
@@ -224,36 +221,36 @@ steinertree1 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,glist)
 	 }
 	 if(!is.null(ter_list)) 
 	  {
-		 V(g)$color="yellow"
+		 igraph::V(g)$color="yellow"
 		 V(g)[ter_list]$color="red"
 	  }
  #-----------------------------label checking in the begining and end to make sure the graph is correctly labeled and if not label them in here
 	 if(labelcheck){
-		labels=c(V(g)$label) #list of vertices
-		names= c(V(g)$name)
+		labels=c(igraph::V(g)$label) #list of vertices
+		names= c(igraph::V(g)$name)
 
 		if(is.null(labels) && is.null(names))   {    #if graph has not labels make labels for it
-		  	r0 =0:(length(V(g))-1)
-		 	 g[[9]][[3]]$label=sapply (r0 ,function(r0) toString(r0) )
-		 	 labels= g[[9]][[3]]$label
+		  	r0 =1:(length(V(g)))
+		 	 igraph::V(g)$label=sapply (r0 ,function(r0) toString(r0) )
+		 	 labels=  igraph::V(g)$label
 		}
 
 		if(is.null(labels) && !is.null(names)){
-			g[[9]][[3]]$label = g[[9]][[3]]$name
+		  igraph::V(g)$label = igraph::V(g)$name
 			labels=names
 		}
 
 		if(!is.null(labels) && is.null(names)){
-			g[[9]][[3]]$name = g[[9]][[3]]$label
-			names=labels
+		  igraph::V(g)$name =  igraph::V(g)$label
+			names = labels
 		}
 
-		len=length(labels)
+		len = length(labels)
 		r0 =1:(len)
-		t =sapply (r0 ,function(r0) toString(labels[r0]) )
-		temp= g[[9]][[3]]$name  #subgraph function was crashing if labels were alphabetic ,so here we keep a copy of them and work with the index of vertices instead
-		g[[9]][[3]]$label=r0
-		g[[9]][[3]]$name=r0
+		t = sapply (r0 ,function(r0) toString(labels[r0]) )
+		temp = igraph::V(g)$name  #subgraph function was crashing if labels were alphabetic ,so here we keep a copy of them and work with the index of vertices instead
+		igraph::V(g)$label=r0
+		igraph::V(g)$name=r0
 	 }
  #--------------------------------
  	 terminals = V(g)[color=="red"]
@@ -272,31 +269,34 @@ steinertree1 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,glist)
 		 #find nearest from those terminals not in subgraph
 		 #this is only to find a paths from one x to other nodes
 		 #paths=get.all.shortest.paths(g,x,nsubtree ))
+	   #paths = paths$res
 		 #t=(sapply(paths,length))
 		 #that makes a problem,the correct version of this part is in below: 
 
 		 #paths=lapply(subtree,function(x) get.all.shortest.paths(g,x,nsubtree ))
+	   #paths = paths$res
 		 #this is not wrong,it is steiner tree with original heuristic :
 		 paths=get.all.shortest.paths(g, subtree[length(subtree)],nsubtree )
+		 paths = paths$res
 		 if (length(paths) == 0 ){ print("Error : the graph is disconnected Steiner tree does not exist.") }
 		 t=sapply(paths,length)
 		 t2=which(t==min(t))
 		 #add it to subtree
 		 edges = union(edges ,paths[t2[1]] )    
 		 t=length(unlist(paths[t2[1]]))
-		 t3=unlist(paths[t2[1]])[t]
+		 t3=unlist(paths[t2[1]])[t][[1]]
 		 #cat("adding new path to steiner tree: ",t3,"\n")
-		 subtree=union(subtree,t3)
+		 subtree=union(subtree,	igraph::V(g)[name==t3])
 
 		 #						print(subtree)
-		 nsubtree= setdiff(nsubtree,t3)
+		 nsubtree= setdiff(nsubtree, igraph::V(g)[name==t3])
 	 }
 	 #for sake of clearness above subtree only includes terminals so:
-	 subtree=union(subtree,unlist(edges))
-	 steinert= minimum.spanning.tree(subgraph(g,subtree))
+	 subtree=union(subtree,V(g)[unique(unlist(edges)) ] )
+	 steinert= minimum.spanning.tree(induced_subgraph(g,subtree))
 	 #here we delete nonterminal vertices that has degree of 1
 	 a=V(steinert)$color 	 
-	 b=igraph0::degree(steinert, v=V(steinert), mode = c("all")) #this is the way to call a function that is masked with another library(RBGL masks degree from igraph) 
+	 b=igraph::degree(steinert, v=V(steinert), mode = c("all")) #this is the way to call a function that is masked with another library(RBGL masks degree from igraph) 
 	 a1=match(a,"yellow")
 	 b1=match(b,"1")
 	 opt= sapply(1:length(a1),function(r) (a1[r]*b1[r] ) )
@@ -306,21 +306,21 @@ steinertree1 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,glist)
 	 if(coloring)
 	 {
 		 #this line on real test code should not be included or changed because the graph labels also will not be like here and should be corrected like the pattern in steiner 6  (also the graph will not be needed to treturned and the steiner is enough)
-		 V(g)$color="yellow"
-		 V(g)$color[subtree+1] ="green"
-		 V(g)$color[terminals+1]="red"
+		 igraph::V(g)$color="yellow"
+		 igraph::V(g)$color[subtree] ="green"
+		 igraph::V(g)$color[terminals]="red"
 	 }
 	 #---------------------
 	 #-----------------
 	 #to recover the real label:
 	 if(labelcheck){
-		g[[9]][[3]]$label=temp
-		g[[9]][[3]]$name= temp
+		igraph::V(g)$label=temp
+		igraph::V(g)$name= temp
 		labellist=c()
 		r0 =1:(length(V(steinert)))
-		labellist =sapply (r0 ,function(r0) temp[ as.integer(steinert[[9]][[3]]$label[r0])] )
-		steinert[[9]][[3]]$label=labellist
-		steinert[[9]][[3]]$name=labellist
+		labellist =sapply (r0 ,function(r0) temp[ as.integer(V(steinert)$label[r0])] )
+		V(steinert)$label=labellist
+		V(steinert)$name=labellist
 	 }
 
 	 glst=c()    
@@ -375,40 +375,41 @@ steinertree2 <- function(labelcheck=TRUE , coloring=FALSE, ter_list= NULL, glist
 	  }
 	 if(!is.null(ter_list)) 
 	  {
-		 V(g)$color="yellow"
+		 igraph::V(g)$color="yellow"
 		 V(g)[ter_list]$color="red"
 	  }
 	 #--------------
 	 #subgraph function was crashing if labels were alphabetic ,so here we keep a copy of them 
 	 #and work with the numerical index value of vertices instead
-	 if(labelcheck){
-		labels=c(V(g)$label) #list of vertices
-		names= c(V(g)$name)
-
-		if(is.null(labels) && is.null(names))   {    #if graph has not labels make labels for it
-		  	r0 =0:(length(V(g))-1)
-		 	 g[[9]][[3]]$label=sapply (r0 ,function(r0) toString(r0) )
-		 	 labels= g[[9]][[3]]$label
-		}
-
-		if(is.null(labels) && !is.null(names)){
-			g[[9]][[3]]$label = g[[9]][[3]]$name
-			labels=names
-		}
-
-		if(!is.null(labels) && is.null(names)){
-			g[[9]][[3]]$name = g[[9]][[3]]$label
-			names=labels
-		}
-
-		len=length(labels)
-		r0 =1:(len)
-		t =sapply (r0 ,function(r0) toString(labels[r0]) )
-		temp= g[[9]][[3]]$name  #subgraph function was crashing if labels were alphabetic ,so here we keep a copy of them and work with the index of vertices instead
-		g[[9]][[3]]$label=r0
-		g[[9]][[3]]$name=r0
-	 }
-	 #-------------------
+ 	 #-----------------------------label checking in the begining and end to make sure the graph is correctly labeled and if not label them in here
+ 	 if(labelcheck){
+ 	   labels=c(igraph::V(g)$label) #list of vertices
+ 	   names= c(igraph::V(g)$name)
+ 	   
+ 	   if(is.null(labels) && is.null(names))   {    #if graph has not labels make labels for it
+ 	     r0 =1:(length(V(g)))
+ 	     igraph::V(g)$label=sapply (r0 ,function(r0) toString(r0) )
+ 	     labels=  igraph::V(g)$label
+ 	   }
+ 	   
+ 	   if(is.null(labels) && !is.null(names)){
+ 	     igraph::V(g)$label = igraph::V(g)$name
+ 	     labels=names
+ 	   }
+ 	   
+ 	   if(!is.null(labels) && is.null(names)){
+ 	     igraph::V(g)$name =  igraph::V(g)$label
+ 	     names=labels
+ 	   }
+ 	   
+ 	   len=length(labels)
+ 	   r0 =1:(len)
+ 	   t =sapply (r0 ,function(r0) toString(labels[r0]) )
+ 	   temp= igraph::V(g)$name  #subgraph function was crashing if labels were alphabetic ,so here we keep a copy of them and work with the index of vertices instead
+ 	   igraph::V(g)$label=r0
+ 	   igraph::V(g)$name=r0
+ 	 }
+ 	 #--------------------------------
 	 terminals = V(g)[color=="red"]
 	 prob=sample(1:length(terminals),1,replace=FALSE)
  	 subtree=terminals[[prob]]
@@ -423,7 +424,7 @@ steinertree2 <- function(labelcheck=TRUE , coloring=FALSE, ter_list= NULL, glist
 		  #here find the "minimum" shortest path
 		  r=1:length(paths)
 		  #t is list of number all pathes from all nodes in subgraph
-  		  t=(sapply(r,function(r) sapply(paths[[r]],length) ) )
+  		t=(sapply(r,function(r) sapply(paths[[r]]$res,length) ) )
 		  #caution: length in list returns the lengh of the first cat but in array it returns number  of all enteries,
 		  #so I use length for paths,but dim for t
 		  #t2 list of is minimums of all pathes from any node in subgraph to all terminal outside of the subgraph (each node inside 
@@ -447,28 +448,28 @@ steinertree2 <- function(labelcheck=TRUE , coloring=FALSE, ter_list= NULL, glist
 		    		t4=which(t[[t3[1]]]==min(t[[t3[1]]]))   #to find all steiner tree should put variable instead of 1
 		 	}
 		 	if(class(t)=="matrix") {
-		    		#use: t[t4,t3[1]] and paths[[t3[1]]][t4] instead
+		    		#use: t[t4,t3[1]] and paths$res[[t3[1]]][t4] instead
 		    		t4=which((t[,t3[1]])==min(t[,t3[1]] ))
 		 	}
 	
-		 	edges= union(edges ,paths[[t3[1]]][t4][1] )  #to find all steiner tree should put variable instead of 
+		 	edges= union(edges ,paths[[t3[1]]][t4][1]$res )  #to find all steiner tree should put variable instead of 
 								     #both 1s to get all the variants of the tree
-		 	found=unlist(paths[[t3[1]]][t4][1])  #to find all steiner tree should put variable instead of both 1s
+		 	found=unlist(paths[[t3[1]]][t4][1]$res)  #to find all steiner tree should put variable instead of both 1s
 		 }else{ #in case  of the first terminal paths have length 1 and we have one dimension less for paths
-		 	edges= union(edges ,paths[[1]][t3][1] )
-			found=unlist(paths[[1]][t3][1])
+		 	edges= union(edges ,paths[[1]][t3][1]$res )
+			found=unlist(paths[[1]][t3][1]$res)
 		 }
 
 		 #cat("smalest shortest path found:",found,"\n")
-		 subtree=union(subtree,found)
+		 subtree=union(subtree,V(g)[unique(found)])
 		 #cat("subtree until now:",subtree,"\n")
-		 nsubtree= setdiff(nsubtree,found)
+		 nsubtree= setdiff(nsubtree,V(g)[unique(found)])
 	 }
 
-	 steinert= minimum.spanning.tree(subgraph(g,subtree))
+	 steinert= minimum.spanning.tree(induced_subgraph(g,subtree))
  	 #here we delete nonterminal vertices that has degree of 1
  	 a=V(steinert)$color
-	 b=igraph0::degree(steinert, v=V(steinert), mode = c("all")) 
+	 b=igraph::degree(steinert, v=V(steinert), mode = c("all")) 
 	 a1=match(a,"yellow")
 	 b1=match(b,"1")
 	 opt= sapply(1:length(a1),function(r) (a1[r]*b1[r] ) )
@@ -477,7 +478,7 @@ steinertree2 <- function(labelcheck=TRUE , coloring=FALSE, ter_list= NULL, glist
 	#-----------------
 	 if(coloring)
 	 {
-		V(g)$color="yellow"
+		igraph::V(g)$color="yellow"
 		V(g)[subtree]$color="green"
 		V(g)[terminals]$color="red"
 	 }
@@ -485,13 +486,13 @@ steinertree2 <- function(labelcheck=TRUE , coloring=FALSE, ter_list= NULL, glist
 	 #-----------------
 	 #to recover the real label:
 	 if(labelcheck){
-		g[[9]][[3]]$label=temp
-		g[[9]][[3]]$name= temp
+		igraph::V(g)$label=temp
+		igraph::V(g)$name= temp
 		labellist=c()
 		r0 =1:(length(V(steinert)))
-		labellist =sapply (r0 ,function(r0) temp[ as.integer(steinert[[9]][[3]]$label[r0])] )
-		steinert[[9]][[3]]$label=labellist
-		steinert[[9]][[3]]$name=labellist
+		labellist =sapply (r0 ,function(r0) temp[ as.integer(V(steinert)$label[r0])] )
+		V(steinert)$label=labellist
+		V(steinert)$name=labellist
 	 }
 	 #-----------------
 	 glst=c()    
@@ -570,42 +571,42 @@ steinertree3 <- function(labelcheck=TRUE,coloring=TRUE,ter_list=NULL,glist)
 	#####################################
           if(!is.null(ter_list)) 
 	  {
-		V(g)$color="yellow"
+		igraph::V(g)$color="yellow"
 		V(g)[ter_list]$color="red"
 	  }
 
 	#subgraph function was crashing if labels were alphabetic ,so here we keep a copy of them and work with the numerical index value of vertices instead
 	#-----------------------------label checking in the begining and end to make sure the graph is correctly labeled and if not label them in here
+	 #-----------------------------label checking in the begining and end to make sure the graph is correctly labeled and if not label them in here
 	 if(labelcheck){
-		labels=c(V(g)$label) #list of vertices
-		names= c(V(g)$name)
-
-		if(is.null(labels) && is.null(names))   {    #if graph has not labels make labels for it
-		  	r0 =0:(length(V(g))-1)
-		 	 g[[9]][[3]]$label=sapply (r0 ,function(r0) toString(r0) )
-		 	 labels= g[[9]][[3]]$label
-		}
-
-		if(is.null(labels) && !is.null(names)){
-			g[[9]][[3]]$label = g[[9]][[3]]$name
-			labels=names
-		}
-
-		if(!is.null(labels) && is.null(names)){
-			g[[9]][[3]]$name = g[[9]][[3]]$label
-			names=labels
-		}
-
-		len=length(labels)
-		r0 =1:(len)
-		t =sapply (r0 ,function(r0) toString(labels[r0]) )
-		temp= g[[9]][[3]]$name  #subgraph function was crashing if labels were alphabetic ,so here we 
-					#keep a copy of them and work with the index of vertices instead
-		g[[9]][[3]]$label=r0
-		g[[9]][[3]]$name=r0
+	   labels=c(igraph::V(g)$label) #list of vertices
+	   names= c(igraph::V(g)$name)
+	   
+	   if(is.null(labels) && is.null(names))   {    #if graph has not labels make labels for it
+	     r0 =1:(length(V(g)))
+	     igraph::V(g)$label=sapply (r0 ,function(r0) toString(r0) )
+	     labels=  igraph::V(g)$label
+	   }
+	   
+	   if(is.null(labels) && !is.null(names)){
+	     igraph::V(g)$label = igraph::V(g)$name
+	     labels=names
+	   }
+	   
+	   if(!is.null(labels) && is.null(names)){
+	     igraph::V(g)$name =  igraph::V(g)$label
+	     names=labels
+	   }
+	   
+	   len=length(labels)
+	   r0 =1:(len)
+	   t =sapply (r0 ,function(r0) toString(labels[r0]) )
+	   temp= igraph::V(g)$name  #subgraph function was crashing if labels were alphabetic ,so here we keep a copy of them and work with the index of vertices instead
+	   igraph::V(g)$label=r0
+	   igraph::V(g)$name=r0
 	 }
 	 #--------------------------------
- 	 terminals=  V(g)[color=="red"]
+ 	 terminals = V(g)[color=="red"]
 	 #make a streiner tree from these chosen 
 	 r=1:length(terminals)
 	 subtrees = lapply(r,function(r) terminals[[r]])
@@ -619,7 +620,7 @@ steinertree3 <- function(labelcheck=TRUE,coloring=TRUE,ter_list=NULL,glist)
 	 {
 		 #find nearest from those terminals not in subgraph
 		 r=1:length(subtrees)
-		 paths=lapply(r,function(r) lapply(subtrees[[r]],  function(x,y) get.all.shortest.paths(g,x,y ),y=nsubtrees[[r]] ))
+		 paths=lapply(r,function(r) lapply(subtrees[[r]],  function(x,y) get.all.shortest.paths(g,x,y )$res,y=nsubtrees[[r]] ))
 		 #here find the "minimum" shortest path
 		 r=1:length(paths)
 		 #t is list of number all pathes from all nodes in subgraph
@@ -657,7 +658,7 @@ steinertree3 <- function(labelcheck=TRUE,coloring=TRUE,ter_list=NULL,glist)
 			found= lapply(t3len,function(x) paths[t3[x]][[1]][[1]][t4[[x]][1]] )
 		 }else{ #in case  of the first terminal paths have length 1 and we have one dimension less for paths
 			#edges= union(edges ,paths[[1]][t3][1] )
-			intersect(subtrees[[x]],unlist(terminals))#should correct it with proper smaples
+			intersect(subtrees[[x]],V(g)[unlist(terminals)])#should correct it with proper samples
 			cat("error /n")
 			#found=unlist(paths[[1]][t3][1])
 		 }
@@ -673,7 +674,7 @@ steinertree3 <- function(labelcheck=TRUE,coloring=TRUE,ter_list=NULL,glist)
 		subtrees= lapply(1:length(subtrees),function(x) makesubtrees(x) )
 		#we delete  repeated subtrees here 	
 		#we presume here  length(subtrees) is more than 1
-         		i=1
+        i=1
      		j=2
      		while (i  <= ((length(subtrees)-1) ))
      		{
@@ -700,10 +701,10 @@ steinertree3 <- function(labelcheck=TRUE,coloring=TRUE,ter_list=NULL,glist)
 	# subtreegroup = sapply(1:length(terminals) ,function(x) all( is.element(terminals,intersect(subtrees[[x]],unlist(terminals)))))
 	 #subtreenum= grep(TRUE,subtreegroup)[1]
 	 #steinert= minimum.spanning.tree(subgraph(g,subtrees[[subtreenum]]))
-	 steinert= minimum.spanning.tree(subgraph(g,subtrees[[1]]))
+	 steinert= minimum.spanning.tree(induced_subgraph(g,subtrees[[1]]))
 	 #here we delete nonterminal vertices that has degree of 1
 	 a=V(steinert)$color
-	b=igraph0::degree(steinert, v=V(steinert), mode = c("all")) 
+	b=igraph::degree(steinert, v=V(steinert), mode = c("all")) 
 	 a1=match(a,"yellow")
 	 b1=match(b,"1")
 	 opt= sapply(1:length(a1),function(r) (a1[r]*b1[r] ) )
@@ -712,19 +713,20 @@ steinertree3 <- function(labelcheck=TRUE,coloring=TRUE,ter_list=NULL,glist)
 	#----------------coloring
 	 if(coloring)
 	 {
-		V(g)$color="yellow"
-		V(g)[subtrees[[subtreenum]]]$color="green"
+		igraph::V(g)$color="yellow"
+		#V(g)[subtrees[[subtreenum]]]$color="green"
+		V(g)[subtrees[[1]]]$color="green"
 		V(g)[unlist(terminals)]$color="red"
 	 }
 	#-----------------to recover the real label:
 	 if(labelcheck){
-		g[[9]][[3]]$label=temp
-		g[[9]][[3]]$name= temp
+		igraph::V(g)$label=temp
+		igraph::V(g)$name= temp
 		labellist=c()
 		r0 =1:(length(V(steinert)))
-		labellist =sapply (r0 ,function(r0) temp[ as.integer(steinert[[9]][[3]]$label[r0])] )
-		steinert[[9]][[3]]$label=labellist
-		steinert[[9]][[3]]$name=labellist
+		labellist =sapply (r0 ,function(r0) temp[ as.integer(V(steinert)$label[r0])] )
+		V(steinert)$label=labellist
+		V(steinert)$name=labellist
 	 }
 	 #-----------------
 
@@ -756,36 +758,36 @@ steinertree8 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,ReturnAll
  }
  if(!is.null(ter_list)) 
   {
-	V(g)$color="yellow"
+	igraph::V(g)$color="yellow"
 	V(g)[ter_list]$color="red"
   }
  #-----------------------------label checking in the begining and end to make sure the graph is correctly labeled and if not label them in here
  if(labelcheck){
-	labels=c(V(g)$label) #list of vertices
-	names= c(V(g)$name)
-
-	if(is.null(labels) && is.null(names))   {    #if graph has not labels make labels for it
-	  	r0 =0:(length(V(g))-1)
-	 	 g[[9]][[3]]$label=sapply (r0 ,function(r0) toString(r0) )
-	 	 labels= g[[9]][[3]]$label
-	}
-
-	if(is.null(labels) && !is.null(names)){
-		g[[9]][[3]]$label = g[[9]][[3]]$name
-		labels=names
-	}
-
-	if(!is.null(labels) && is.null(names)){
-		g[[9]][[3]]$name = g[[9]][[3]]$label
-		names=labels
-	}
-
-	len=length(labels)
-	r0 =1:(len)
-	t =sapply (r0 ,function(r0) toString(labels[r0]) )
-	temp= g[[9]][[3]]$name  #subgraph function was crashing if labels were alphabetic ,so here we keep a copy of them and work with the index of vertices instead
-	g[[9]][[3]]$label=r0
-	g[[9]][[3]]$name=r0
+   labels=c(igraph::V(g)$label) #list of vertices
+   names= c(igraph::V(g)$name)
+   
+   if(is.null(labels) && is.null(names))   {    #if graph has not labels make labels for it
+     r0 =1:(length(V(g)))
+     igraph::V(g)$label=sapply (r0 ,function(r0) toString(r0) )
+     labels=  igraph::V(g)$label
+   }
+   
+   if(is.null(labels) && !is.null(names)){
+     igraph::V(g)$label = igraph::V(g)$name
+     labels=names
+   }
+   
+   if(!is.null(labels) && is.null(names)){
+     igraph::V(g)$name =  igraph::V(g)$label
+     names=labels
+   }
+   
+   len=length(labels)
+   r0 =1:(len)
+   t =sapply (r0 ,function(r0) toString(labels[r0]) )
+   temp= igraph::V(g)$name  #subgraph function was crashing if labels were alphabetic ,so here we keep a copy of them and work with the index of vertices instead
+   igraph::V(g)$label=r0
+   igraph::V(g)$name=r0
  }
  #--------------------------------
  terminals = V(g)[color=="red"]
@@ -802,6 +804,7 @@ steinertree8 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,ReturnAll
  	nsubtree= setdiff(terminals,subtree)
 	startpoint= subtree
 	paths=get.all.shortest.paths(g, subtree[length(subtree)],nsubtree )	
+	paths = paths$res
 	if (length(paths) == 0 ){ print("Error : the graph is disconnected Steiner tree does not exist.") }
 	t=sapply(paths,length)
 	t2=which(t ==min(t))
@@ -838,6 +841,7 @@ steinertree8 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,ReturnAll
 			subtree= intersect(unlist(terminals),unlist(edgeslist))
 			nsubtree= setdiff(terminals,subtree)
 			paths=get.all.shortest.paths(g, subtree[length(subtree)],nsubtree ) #here the second algorithm must look at all the terminals distances	
+			paths = paths$res
 			t=sapply(paths,length)
 			t2=which(t ==min(t))
 			for(i in 1:length(t2)){ queue[[index+i]]= union(unlist(edgeslist),unlist(paths[t2[i]]))  }#push
@@ -850,10 +854,10 @@ steinertree8 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,ReturnAll
 	t=sapply(paths,length)
 	t2=which(t ==min(t))
 	queue = paths[t2]
-	 steinert= minimum.spanning.tree(subgraph(g,queue[[1]]))
+	 steinert= minimum.spanning.tree(induced_subgraph(g,queue[[1]]))
 	 #here we delete nonterminal vertices that has degree of 1
 	 a=V(steinert)$color
-	 b=igraph0::degree(steinert, v=V(steinert), mode = c("all")) 
+	 b=igraph::degree(steinert, v=V(steinert), mode = c("all")) 
 	 a1=match(a,"yellow")
 	 b1=match(b,"1")
 	 opt= sapply(1:length(a1),function(r) (a1[r]*b1[r] ) )
@@ -863,21 +867,21 @@ steinertree8 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,ReturnAll
 	 if(coloring)
 	 {
 		 #this line on real test code should not be included or changed because the graph labels also will not be like here and should be corrected like the pattern in steiner 6  (also the graph will not be needed to treturned and the steiner is enough)
-		 V(g)$color="yellow"
-		 V(g)$color[subtree+1] ="green"
-		 V(g)$color[terminals+1]="red"
+		 igraph::V(g)$color="yellow"
+		 igraph::V(g)$color[subtree] ="green"
+		 igraph::V(g)$color[terminals]="red"
 	 }
 	 #---------------------
 	 #-----------------
 	 #to recover the real label:
 	 if(labelcheck){
-		g[[9]][[3]]$label=temp
-		g[[9]][[3]]$name= temp
+		igraph::V(g)$label=temp
+		igraph::V(g)$name= temp
 		labellist=c()
 		r0 =1:(length(V(steinert)))
-		labellist =sapply (r0 ,function(r0) temp[ as.integer(steinert[[9]][[3]]$label[r0])] )
-		steinert[[9]][[3]]$label=labellist
-		steinert[[9]][[3]]$name=labellist
+		labellist =sapply (r0 ,function(r0) temp[ as.integer(V(steinert)$label[r0])] )
+		V(steinert)$label=labellist
+		V(steinert)$name=labellist
 	 }
 
 	 glst=c()    
@@ -907,6 +911,7 @@ steinertree8 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,ReturnAll
  	nsubtree= setdiff(terminals,subtree)
 	startpoint= subtree
 	paths=get.all.shortest.paths(g, subtree[length(subtree)],nsubtree )	
+	paths = paths$res
 	if (length(paths) == 0 ){ print("Error : the graph is disconnected Steiner tree does not exist.") }
 	t=sapply(paths,length)
 	t2=which(t ==min(t))
@@ -949,6 +954,7 @@ steinertree8 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,ReturnAll
 			subtree= intersect(unlist(terminals),unlist(edgeslist))
 			nsubtree= setdiff(terminals,subtree)
 			paths=get.all.shortest.paths(g, subtree[length(subtree)],nsubtree ) #here the second algorithm must look at all the terminals distances	
+			paths = paths$res
 			t=sapply(paths,length)
 			t2=which(t ==min(t))
 			for(i in 1:length(t2)){ queue[[index+i]]= union(unlist(edgeslist),unlist(paths[t2[i]]))  }#push
@@ -966,10 +972,10 @@ steinertree8 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,ReturnAll
 	 #for sake of clearness above subtree only includes terminals so:
 	 steinert_list = c()
 	 for(i in 1:length(t2)){
-	 steinert= minimum.spanning.tree(subgraph(g,queue[[i]]))
+	 steinert= minimum.spanning.tree(induced_subgraph(g,queue[[i]]))
 	 
 	 a=V(steinert)$color
-	 b=igraph0::degree(steinert, v=V(steinert), mode = c("all")) 
+	 b=igraph::degree(steinert, v=V(steinert), mode = c("all")) 
 	 a1=match(a,"yellow")
 	 b1=match(b,"1")
 	 opt= sapply(1:length(a1),function(r) (a1[r]*b1[r] ) )
@@ -982,23 +988,23 @@ steinertree8 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,ReturnAll
 	 if(coloring)
 	 {
 		 #this line on real test code should not be included or changed because the graph labels also will not be like here and should be corrected like the pattern in steiner 6  (also the graph will not be needed to treturned and the steiner is enough)
-		 V(g)$color="yellow"
-		 V(g)$color[subtree+1] ="green"
-		 V(g)$color[terminals+1]="red"
+		 igraph::V(g)$color="yellow"
+		 igraph::V(g)$color[subtree] ="green"
+		 igraph::V(g)$color[terminals]="red"
 	 }
 	 #---------------------
 	 #-----------------
 	 #to recover the real label:
 	 if(labelcheck){
-		g[[9]][[3]]$label=temp
-		g[[9]][[3]]$name= temp
+		igraph::V(g)$label=temp
+		igraph::V(g)$name= temp
 		labellist=c()
 		for(i in 1:length(t2)){
 	 		steinert= steinert_list[[i]]
 			r0 =1:(length(V(steinert)))
-			labellist =sapply (r0 ,function(r0) temp[ as.integer(steinert[[9]][[3]]$label[r0])] )
-			steinert[[9]][[3]]$label=labellist
-			steinert[[9]][[3]]$name=labellist
+			labellist =sapply (r0 ,function(r0) temp[ as.integer(V(steinert)$label[r0])] )
+			V(steinert)$label=labellist
+			V(steinert)$name=labellist
 			steinert_list[[i]]=  steinert
 		}
 	 }
@@ -1031,12 +1037,14 @@ steinertree8 <- function(labelcheck= TRUE,coloring= TRUE,ter_list=NULL,ReturnAll
 Merge_Steiner = function(glist)
 {
 	g = glist[[1]]
-	MStree = glist[[2]]
-	merged= igraph.to.graphNEL(MStree[[1]]) 
+	MStreeList = glist[[2]]
 
-	if(length(MStree) > 1){ 
-	 	for (i  in 2:length(MStree) ){
-		 merged= graph::join(merged,igraph.to.graphNEL(MStree[[i]]))	
+	merged= igraph.to.graphNEL(MStreeList[[1]]) 
+	
+	
+	if(length(MStreeList) > 1){ 
+	 	for (i  in 2:length(MStreeList) ){
+		 merged= graph::join(merged,igraph.to.graphNEL(MStreeList[[i]]))	
 	 	}		
 	}
 	return(igraph.from.graphNEL(merged))
@@ -1070,48 +1078,45 @@ steinerexact <- function(labelcheck = FALSE , coloring=FALSE, ter_list= NULL, Re
 	if (coloring){printinfo=TRUE}
 	if (!is.connected(graph) ){ print("Error : the graph is disconnected Steiner tree does not exist.") }
 	g=graph
-	if (!is.null(g[[9]][[3]]$name) ) { t=g[[9]][[3]]$name}
-	#-----------------------------label checking in the begining and end to make sure the graph is correctly labeled and if not label them in here
- 	if(labelcheck){
-		labels=c(V(g)$label) #list of vertices
-		names= c(V(g)$name)
+	if (!is.null(igraph::V(g)$name) ) { t=igraph::V(g)$name}
 
-		if(is.null(labels) && is.null(names))   {    #if graph has not labels make labels for it
-		  	r0 =0:(length(V(g))-1)
-		 	 g[[9]][[3]]$label=sapply (r0 ,function(r0) toString(r0) )
-		 	 labels= g[[9]][[3]]$label
-		}
-
-		if(is.null(labels) && !is.null(names)){
-			g[[9]][[3]]$label = g[[9]][[3]]$name
-			labels=names
-		}
-
-		if(!is.null(labels) && is.null(names)){
-			g[[9]][[3]]$name = g[[9]][[3]]$label
-			names=labels
-		}
-
-		len=length(labels)
-		r0 =1:(len)
-		t =sapply (r0 ,function(r0) toString(labels[r0]) )
-		temp= g[[9]][[3]]$name  #subgraph function was crashing if labels were alphabetic ,so here we keep a copy of them and work with the index of vertices instead
-		g[[9]][[3]]$label=r0
-		g[[9]][[3]]$name=r0
- 	}
-	#--------------------------------
 	if (class(ter_list)== "numeric" ){ter_list= as.character(ter_list)}
-
+	
 	if(!is.null(ter_list)) 
-	  {
-			 V(g)$color="yellow"
-			 V(g)[ter_list]$color="red"
+	{
+	  igraph::V(g)$color="yellow"
+	  V(g)[ter_list]$color="red"
+	}
+	#-----------------------------label checking in the begining and end to make sure the graph is correctly labeled and if not label them in here
+	if(labelcheck){
+	  labels=c(igraph::V(g)$label) #list of vertices
+	  names= c(igraph::V(g)$name)
+	  
+	  if(is.null(labels) && is.null(names))   {    #if graph has not labels make labels for it
+	    r0 =1:(length(igraph::V(g)))
+	    igraph::V(g)$label=sapply (r0 ,function(r0) toString(r0) )
+	    labels=  igraph::V(g)$label
 	  }
-	terminals= g[[9]][[3]]$name[g[[9]][[3]]$color=="red"]
-	 #terminals = V(g)[color=="red"]
-	 #r0=1:length(terminals)
-	 #ter_t=sapply (r0 ,function(r) (c(g))[[9]][[3]]$label[terminals[[r+1]]] )
-         #terminals= ter_t
+	  
+	  if(is.null(labels) && !is.null(names)){
+	    igraph::V(g)$label = igraph::V(g)$name
+	    labels=names
+	  }
+	  
+	  if(!is.null(labels) && is.null(names)){
+	    igraph::V(g)$name =  igraph::V(g)$label
+	    names=labels
+	  }
+	  temp= igraph::V(g)$name  #subgraph function was crashing if labels were alphabetic ,so here we keep a copy of them and work with the index of vertices instead
+	  r0 =1:(length(igraph::V(g)))
+	  igraph::V(g)$label=r0
+	  igraph::V(g)$name=r0
+	  len=length(labels)
+	  r0 =1:(len)
+	  t =sapply (r0 ,function(r0) toString(r0) )
+	}
+	#--------------------------------
+	terminals= igraph::V(g)$name[igraph::V(g)$color=="red"]
 	len=length(V(g))
 	#introducing an lower limit and higher limit of the exact solution
 	lim=length(V(g))-length(terminals)
@@ -1135,7 +1140,7 @@ steinerexact <- function(labelcheck = FALSE , coloring=FALSE, ter_list= NULL, Re
 		{
 			r =(len- lim) 
 			allcom = combn(t[1:len],r)
-			allmst= lapply(1:dim(allcom)[2], function(x)  minimum.spanning.tree(subgraph(g,allcom[,x] ) ))
+			allmst= lapply(1:dim(allcom)[2], function(x)  minimum.spanning.tree(induced_subgraph(g,allcom[,x] ) ))
 			assign("allmst",allmst, envir = en)
 			#subgraph return answeres with changed ides, but keeps the labels
 			edgmst= lapply (1:dim(allcom)[2], function(x)  get.edgelist(allmst[[x]], names=TRUE)) 
@@ -1156,7 +1161,7 @@ steinerexact <- function(labelcheck = FALSE , coloring=FALSE, ter_list= NULL, Re
 	 #cat("runloop",runloop,"\n")
 	 return (smst)
 	}
-	res=lim:0
+	res=lim:1
 	sol<-sapply(res, function(x) rwhile(x,len) )
  	sol_place=get("sol_place",envir=en)
 	allmst =get("allmst",envir=en)
@@ -1200,22 +1205,22 @@ steinerexact <- function(labelcheck = FALSE , coloring=FALSE, ter_list= NULL, Re
 			 if(coloring)
 			 {
 				 #this line on real test code should not be included or changed because the graph labels also will not be like here and should be corrected like the pattern in steiner 6  (also the graph will not be needed to treturned and the steiner is enough)
-				 V(g)$color="yellow"
+				 igraph::V(g)$color="yellow"
 				 V(g)[V(steinert)$label]$color ="green"
 				 V(g)[terminals]$color="red"
 			 }
 			 #----------------------label check
 			 if(labelcheck){
 					 #to recover the real label:
-					 g[[9]][[3]]$label=temp
-					 g[[9]][[3]]$name =temp
+					 igraph::V(g)$label=temp
+					 igraph::V(g)$name =temp
 					 labellist=c()
-					 for (num in 1:length(steinert[[9]][[3]]$label))
+					 for (num in 1:length(V(steinert)$label))
 					 {
-					   labellist[num]=temp[ as.integer(steinert[[9]][[3]]$label[num])]
+					   labellist[num]=temp[ as.integer(V(steinert)$label[num])]
 					 }
-					 steinert[[9]][[3]]$label=labellist
-					 steinert[[9]][[3]]$name=labellist
+					 V(steinert)$label=labellist
+					 V(steinert)$name=labellist
 					 }
 					if(coloring && !ReturnAll)
 					 {
@@ -1252,17 +1257,24 @@ steinerexact <- function(labelcheck = FALSE , coloring=FALSE, ter_list= NULL, Re
 			for(numst in 1:length(stgraphlist) )
 			{
 				labellist=c()
-				for (num in 1:length(stgraphlist[[numst]][[9]][[3]]$label))
+				for (num in 1:length(V(stgraphlist[[numst]])$label))
 				{
-					labellist[num]=temp[ as.integer(stgraphlist[[numst]][[9]][[3]]$label[num])]
+					labellist[num]=temp[ as.integer(V(stgraphlist[[numst]])$label[num])]
 				
 				}
-				stgraphlist[[numst]][[9]][[3]]$label=labellist
-				stgraphlist[[numst]][[9]][[3]]$name=labellist
+				V(stgraphlist[[numst]])$label=labellist
+				V(stgraphlist[[numst]])$name=labellist
 			}
 	    }  }
 	        #---------------------------doing label check
 		#show the result in:
+	 stgraphlist2 = c()
+	 if(coloring && ReturnAll)
+	 {
+	   stgraphlist2[[length(stgraphlist2)+1]] <-g
+	   stgraphlist2[[length(stgraphlist)+1]] <-stgraphlist
+	   stgraphlist = stgraphlist2
+	 }
 		if(printinfo){	
 		cat("list of all min spanning trees is: \n")
 		print( stgraphlist )
@@ -1272,24 +1284,67 @@ steinerexact <- function(labelcheck = FALSE , coloring=FALSE, ter_list= NULL, Re
 }
 
 ####################################################################################
-#      A set of 6 steiner tree algorithms 
-# 	graph is the imput graph
+#   A set of 6 steiner tree algorithms 
+#
+# 	"graph" is the input graph
 # 	
-#   	Type define the steiner algorithm type to use. 
-#	SP is the Shortest Path heuristic.
-#	
-#	KRU is Kruskal-Based Heuristic  algorithm
-#	RSP is a Random Approximation algorithm
-#	EXA uses the exact algorithm 
-#	SRM returns and term from a component set of enumerated steiner trees for the graph using the heuristic algorithm
+#   "Type" defines the steiner algorithm type to use:
+#	        SP is the Shortest Path heuristic.
+#	        KRU is Kruskal-Based Heuristic  algorithm
+#	        RSP is a Random Approximation algorithm
+#	        EXA uses the exact algorithm 
+#	        SPM returns and term from a component set of enumerated steiner trees for the graph using the heuristic algorithm
 #
-#	Label check checks if lables exist on the graph.the function will not work if the graph is not labled,so if it is not labeled by making   labelcheck= TRUE it will be able to work with them too
-# 	If "coloring" be true, beside the reuruned stiener tree, it will return a copy of the input graph and show the stiner tree on that by coloring.yellow nodes will be steiner nodes and red nodes will be terminals
-# 	If "merge"  is selected to be TRUE it will force the algorithm to return multiple steiner tree algorithm solutions.It is available for Ex and SPM
-#	"ter_list" is the list of terminals for the steiner tree
+#	  Label check checks if lables exist on the graph. The function will not work if the graph is not labled,
+#   so if it is not labeled by making labelcheck= TRUE it will be able to work with them too
 #
+# 	If "coloring" be true, it a returns a list. The fist second item is a resulted steiner tree, and the first
+#       item in the list is a copy of the input graph 
+#       that shows the stiener tree on that by coloring. 
+#       Yellow nodes designate the steiner nodes and red nodes show the terminals.
+#
+# 	If "enumerate"  is selected to be TRUE it will force the algorithm to return multiple steiner tree algorithm solutions.It is available for Ex and SPM
+#
+#	  "ter_list" is the list of terminals for the steiner tree
+#
+#  Example:
+# library(igraph)
+# library(tcltk2)
 
-steinertree <- function( type, ter_list = NULL, graph, enumerate= FALSE  ,coloring= FALSE)
+# el <- matrix( c("a", "b", "a", "c", "b", "d","d","e", "c", "b" ), nc = 2, byrow = TRUE)
+# g1 =graph_from_edgelist(el)
+# ter_list= c("a","b","e")
+
+# SP=steinertree("SP", ter_list, g1, TRUE, FALSE)
+# tkplot(SP[[1]])
+
+# SPM=steinertree("SPM", ter_list, g1 ,TRUE, TRUE)
+# tkplot(SPM[[2]])
+
+# SPM2 = steinertree("SPM", ter_list, g1 , TRUE, FALSE)
+# tkplot(SPM2[[1]])
+
+
+# RSP = steinertree("RSP", ter_list, g1 , FALSE, FALSE)
+# tkplot(RSP[[1]])
+
+# RSP2 = steinertree("RSP", ter_list, g1 , FALSE, TRUE)
+# tkplot(RSP2[[2]])
+
+# KB = steinertree("KB", ter_list, g1 , TRUE)
+# tkplot(KB[[1]])
+# tkplot(KB[[2]])
+
+# EXA = steinertree("EXA", ter_list, g1 , TRUE , FALSE)
+# tkplot(EXA[[1]])
+
+# EXA2 = steinertree("EXA", ter_list, g1 , TRUE , TRUE)
+# tkplot(EXA2[[2]])
+
+# EXA3 = steinertree("EXA", ter_list, g1 , FALSE , FALSE)
+# tkplot(EXA3[[1]])
+
+steinertree <- function( type, ter_list = NULL, graph, enumerate= FALSE  ,coloring= TRUE)
 {	
 	color=c()
 	if(is.null(graph)){
@@ -1306,21 +1361,14 @@ steinertree <- function( type, ter_list = NULL, graph, enumerate= FALSE  ,colori
 		return()		
 	}
 
-	if( is.null(graph[[9]][[3]]) ){
+	if( is.null(V(graph)) ){
 		print("Error, the input graph vertices are NULL.")
 		return()		
 	}
 
-
-	if( length(graph[[9]][[3]])==0 ){
+	if( length(V(graph)$name)==0 ){
 		print("Warning, the input graph vertices have no name and no label.")
 	}
-
-	if( !length(graph[[9]][[3]])==0 ){
-		if( (is.na(graph[[9]][[3]]))  ){
-		print("Error, the input graph has no vertices.")
-		return()		
-	}}
 
 	if (is.null(ter_list) || is.na(ter_list) || ter_list == FALSE || length(ter_list)==0){
 			ter_list = V(graph)[color=="red"]
@@ -1364,22 +1412,36 @@ steinertree <- function( type, ter_list = NULL, graph, enumerate= FALSE  ,colori
 	}
 
 	if (type == "RSP"){
-		result=appr_steiner(70, labelcheck, coloring, ter_list, glist) 
+		result = appr_steiner(70, labelcheck, coloring, ter_list, glist) 
 	}
 
 	if (type == "EXA"){
+	    labelcheck= TRUE
 			result=steinerexact(labelcheck, coloring, ter_list, enumerate, glist)
 		 	if (enumerate){
-				glist[[2]]=result
-		 		result = Merge_Steiner(glist)
-		 	}	
+		 	    if(coloring){
+		 	    print(length(result))
+		 	    glist[[1]]=result[[1]]
+		 	    glist[[2]]=result[[2]]
+		 	    result[[2]] = Merge_Steiner(glist) 
+		 	    }else{
+			   	  glist[[2]]=result
+		 		    result[[1]] = Merge_Steiner(glist)
+		 	    }	
+		 	}
 	}
 	if (type == "SPM"){
 			result= steinertree8(labelcheck, coloring, ter_list, enumerate, glist)
 			 	if (enumerate){
-				glist[[2]]=result[[1]]
-		 		result = Merge_Steiner(glist)
-	 	}	 
+			 	    if(coloring){
+			 	      glist[[1]]=result[[1]]
+			 	      glist[[2]]=result[[2]]
+			 	      result[[2]] = Merge_Steiner(glist) 
+			 	    }else{
+			 	      glist[[2]]=result[[1]]
+			 	      result[[1]] = Merge_Steiner(glist)
+		 	    }
+	 	 } 	 
 	}
 assign("last.warning", NULL, envir = baseenv())
 return(result)

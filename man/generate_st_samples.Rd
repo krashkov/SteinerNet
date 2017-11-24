@@ -43,16 +43,25 @@ When \code{test} is appr the function returns random sets of terminals.
 
 
 \references{
-	1. Please refer to the paper that is published with this package. 
+	1. Afshin Sadeghi and Holger Froehlich, "Steiner tree methods for optimal sub-network identification: an empirical study", BMC Bioinformatics 2013 14:144  
 }
 
 \author{Afshin Sadeghi}
 
 \examples{
- library(SteinerNet)
- g <- graph.ring(10)
- #generate_st_samples("exact", g, "testfolder", c(2,3), c(.8,.8))
+       library(igraph)
+       library(SteinerNet)
+       g <- igraph::graph.ring(10)
+       \dontshow{
+                library(igraph)
+                library(SteinerNet)
+                g <- igraph::graph.ring(10)
+       }
+       \donttest{
+      generate_st_samples("exact", g, "testfolder", c(2,3), c(.8,.8))
+       }
 }
+
 \keyword{graphs, protein interaction, network, pathway data graph, steiner tree}
 
 

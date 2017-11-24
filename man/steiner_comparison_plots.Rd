@@ -10,7 +10,8 @@
 \title{steiner_comparison_plots}
 \description{This function plots the comparison results of Steiner tree algorithms excutions on simulated data.}
 \usage{
-steiner_comparison_plots (test_name, test_folder =NULL, outputname = NULL, listofterminaltest = NULL ,repetition= NULL)
+steiner_comparison_plots (test_name, test_folder = NULL, outputname = NULL,
+listofterminaltest = NULL ,repetition = NULL)
 }
 
 \arguments{
@@ -71,12 +72,21 @@ The function stores a resulted plot in a PDF file.
 \author{Afshin Sadeghi}
 
 \examples{
- library(SteinerNet)
- g <- graph.ring(10)
- #generate_st_samples("exact", g, "testfolder", c(2,3), c(.8,.8))
- #steiner_simulation("exact", "testfolder", c(2,3), c(.8,.8))
- #steiner_comparison_plots ("exact", "testfolder", c(2,3), c(.8,.8))
+       library(igraph)
+       library(SteinerNet)
+       g <- igraph::graph.ring(10)
+       \dontshow{
+                library(igraph)
+                library(SteinerNet)
+                g <- igraph::graph.ring(10)
+       }
+       \donttest{
+       generate_st_samples("exact", g, "testfolder", c(2,3), c(.8,.8))
+       steiner_simulation("exact", "testfolder", c(2,3), c(.8,.8))
+       steiner_comparison_plots ("exact", "testfolder", c(2,3), c(.8,.8))
+       }
 }
+
 \keyword{graphs, protein interaction, network, graph, steiner tree}
 
 
