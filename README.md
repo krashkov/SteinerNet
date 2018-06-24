@@ -1,55 +1,76 @@
-# SteinerNet v2
-Steiner Tree Approach for Graph Analysis
+# SteinerNet
 
-This library is made in R programming language. 
+The Steiner tree problem on unweighted graphs seeks a minimum subtree (i.e. subtree with minimal number of edges), containing a given subset of the vertices (terminals). This problem is NP-complete. This package provides several heuristic and one exact approach for finding Steiner trees, as well as tools for analyzing resultant trees and comparing different algorithms.
 
-This version of SteirNet (v2) works with igraph.
+This R package was originally applied to analyzing biological networks. For more information about algorithms and their application, see [original article](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-144) and [tutorial](https://github.com/krashkov/SteinerNet/blob/master/vignettes/tutorial.pdf).
 
-### Older versions
-older versions of SteirNet upto (v1.3) works with igraph0.
 
-## Installation
-For using this library these libraries are needed to included:
-### RBGL http://www.bioconductor.org/packages/release/bioc/html/RBGL.html
 
-For that run: 
+# Installation
 
-source("https://bioconductor.org/biocLite.R")
+The installation process may differ to different versions of package. See information below.
 
-biocLite("RBGL")
+### Version 3.0.0
 
-### igraph  https://cran.r-project.org/web/packages/igraph/index.html
+This is the current version of the package. It only requires installation of `igraph` package.
 
-install.packages("igraph")
+    install.packages("igraph")
 
-##### igraph0 for versions upto 1.7 
+    install.packages("SteinerNet")
 
-download and manually install the last version from here https://cran.r-project.org/src/contrib/Archive/igraph0/igraph0_0.5.7.tar.gz
+### Version 2.0
 
-### limma http://bioconductor.org/packages/release/bioc/html/limma.html
+To install older versions of packages from CRAN, you need `install_version()` from `devtools` package. SteinerNet v2.0 works with `igraph`, `limma` and `RBGL` packages.
 
-For that run: 
+    install.packages("igraph")
 
-source("https://bioconductor.org/biocLite.R")
+    source("https://bioconductor.org/biocLite.R")
+    biocLite("RBGL")
 
-biocLite("limma")
+    source("https://bioconductor.org/biocLite.R")
+    biocLite("limma")
 
-## Version History on Cran
+    install_version("SteinerNet", version = "2.0")
+
+### Versions before 2.0
+
+The installation process of older versions is similar to previous, but note, that they works with [`igraph0` package](https://cran.r-project.org/src/contrib/Archive/igraph0).
+
+    install_version("igraph0", version = "0.5.7")
+
+    source("https://bioconductor.org/biocLite.R")
+    biocLite("RBGL")
+
+    source("https://bioconductor.org/biocLite.R")
+    biocLite("limma")
+
+    install_version("SteinerNet", version = "1.x")
+
+### Version history on Cran
+
 https://cran.r-project.org/src/contrib/Archive/SteinerNet/
 
+
+
 # News
-## 2017 Nov 
-Due to number of requests to work with newer version of R which are based on igraph instead of igraph0
-I update the code of SteinerNet 
+
+### June 2018
+
+SteinerNet v3.0.0 release. Main changes:
+
+* Critical bugs was fixed.  A list may be provided on demand.
+* Structure of files and functions was refreshed
+* **Backward incompatible changes were made** (behavior of some functions and list of passed arguments was slightly changed). On the one hand, it makes the work with library simpler and more intuitive, but on the other hand, the workflow is changed too. So if you want to reproduce the results of the original article, please see [tutorial](https://github.com/krashkov/SteinerNet/blob/master/vignettes/tutorial.pdf) and documentation.
+
+
+### November 2017
+
+SteinerNet v2.0 release. Support of igraph graphs are added.
+
 
 
 # Citation
-To use this code in your research please cite this the article related to this package:
 
-Steiner tree methods for optimal sub-network identification: an empirical study
+To use this code in your research please cite this article related to this package:
 
-Afshin Sadeghi and Holger Fröhlich
-BMC Bioinformatics 2013 14:144
-https://doi.org/10.1186/1471-2105-14-144
-
-
+*Afshin Sadeghi and Holger Froehlich, "Steiner tree methods for optimal sub-network identification: an empirical study", BMC Bioinformatics 2013 14:144 doi:10.1186/1471-2105-14-144.*
