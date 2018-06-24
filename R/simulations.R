@@ -61,8 +61,8 @@ simulation_tests <- function (type, repeattimes, optimize, glist, ter_list) {
 #'                 ter_list declares a number of experiments to perform with different terminal sets
 #'                 for each type of algorithm.
 #' 
-#' @return List, each element of which corresponds to specific algoritms type. Each element of a list also
-#'         is a list and conatains a named vector of evaluated parameters of steiner tree
+#' @return List, each element of which corresponds to specific algorithms type. Each element of a list also
+#'         is a list and contains a named vector of evaluated parameters of steiner tree
 #'         (runtime, edges_num, vert_num, trees_num, term_freq, edge_den). Number of sublist corresponds to
 #'         number of terminal set in ter_list.
 #'         

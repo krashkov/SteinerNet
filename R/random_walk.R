@@ -34,8 +34,8 @@ gRandWalk <- function (glist, numofterminals, terminalpr) {
 #' 
 #' @param graph an igraph graph; should be undirected, otherwise it is converted to undirected.
 #' @param ter_number a numeric vector; each element indicates the number of terminals to be selected and length of vector
-#'                   indecates the number of terminal sets to be picked.
-#' @param prob a numeric vector of the same length as ter_number; prob[i] defines a propability with which each
+#'                   indicates the number of terminal sets to be picked.
+#' @param prob a numeric vector of the same length as ter_number; prob[i] defines a probability with which each
 #'             next node accepted or rejected while selecting ter_number[i] terminals.
 #' 
 #' @return A list of the same length as ter_number. Each element of list contains a vector of ids of selected vertices.

@@ -1,7 +1,7 @@
 ####------------------------------------- Documentation -------------------------------------####
 #' Perform wilcox test
 #' 
-#' @description Perform pairwise wilcoxon rank sum tests
+#' @description Perform pairwise Wilcoxon rank sum tests
 #' 
 #' @usage steiner_comparison_wilcox(type, method, data)
 #' 
