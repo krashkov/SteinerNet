@@ -1,19 +1,24 @@
 Package: SteinerNet
-Version: 2.0
-Date: 2017-11-23
+Type: Package
+Version: 3.0.0
+Date: 2018-06-22
 Title: Steiner Tree Approach for Graph Analysis
+Description: A set of functions for finding and analysing Steiner trees. It has applications in
+    biological pathway network analysis. Sadeghi 2013 doi:10.1186/1471-2105-14-144.
+Author: Afshin Sadeghi <sadeghi.afshin@gmail.com>
+Maintainer: Aleksei Krasikov <krasikov.as@phystech.edu>
+URL: https://github.com/krashkov/SteinerNet
+BugReports: https://github.com/krashkov/SteinerNet/issues
+Depends: R (>= 3.1.0),
+    igraph (>= 0.6.0)
+Imports: grDevices,
+    stats,
+    utils,
+    graphics
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
 License: GPL-3
-Author: Afshin Sadeghi
-Maintainer: Afshin Sadeghi <sadeghi.afshin@gmail.com>
-Depends: R (>= 3.1)
-Imports: igraph, limma, RBGL, graph, grDevices, stats, utils, graphics
-Description: A set of graph functions to find Steiner
-        trees on graphs. It provides tools for analysing Steiner tree
-        application on networks. It has applications in biological
-        pathway network analysis (Sadeghi 2013) <doi:10.1186/1471-2105-14-144>.
-Packaged: 2017-11-23 18:08:11 UTC; afshin
 Repository: CRAN
-Date/Publication: 2017-11-24 09:16:38 UTC
 NeedsCompilation: no
-X-CRAN-Comment: Archived on 2013-09-07: it was never updated from
-        igraph0 to igraph despite several reminders.
+RoxygenNote: 6.0.1
