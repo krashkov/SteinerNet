@@ -21,14 +21,12 @@ steiner_comparison_wilcox(type, method, data)
 Object of class "pairwise.htest"
 }
 \description{
-Perform pairwise wilcoxon rank sum tests
+Perform pairwise Wilcoxon rank sum tests
 }
 \details{
 "holm" method for adjusting p-values is used.
 }
 \examples{
-library(igraph)
-
 g <- graph("Cubical")
 
 data <- steiner_simulation(type = c("SP", "KB", "SPM"),

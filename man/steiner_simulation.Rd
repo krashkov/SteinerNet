@@ -23,8 +23,8 @@ ter_list declares a number of experiments to perform with different terminal set
 for each type of algorithm.}
 }
 \value{
-List, each element of which corresponds to specific algoritms type. Each element of a list also
-        is a list and conatains a named vector of evaluated parameters of steiner tree
+List, each element of which corresponds to specific algorithms type. Each element of a list also
+        is a list and contains a named vector of evaluated parameters of steiner tree
         (runtime, edges_num, vert_num, trees_num, term_freq, edge_den). Number of sublist corresponds to
         number of terminal set in ter_list.
 }
@@ -37,8 +37,6 @@ This function executes given Steiner Algorithms and calculates such parameters a
 As a ter_list, a vector can be passed. In this case it is converted to a list containing only one element.
 }
 \examples{
-library(igraph)
-
 g <- graph("Cubical")
 
 steiner_simulation(type = c("SP", "KB", "SPM"),

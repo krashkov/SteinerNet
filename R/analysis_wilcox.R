@@ -21,8 +21,6 @@
 #' @details "holm" method for adjusting p-values is used.
 #' 
 #' @examples
-#' library(igraph)
-#' 
 #' g <- graph("Cubical")
 #' 
 #' data <- steiner_simulation(type = c("SP", "KB", "SPM"),

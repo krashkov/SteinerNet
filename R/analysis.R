@@ -22,8 +22,6 @@
 #' @seealso \code{\link{generate_st_samples}}, \code{\link{steiner_simulation}}, \code{\link{steinertree}}
 #' 
 #' @examples
-#' library(igraph)
-#' 
 #' g <- graph("Cubical")
 #' 
 #' data <- steiner_simulation(type = c("SP", "KB", "SPM"),

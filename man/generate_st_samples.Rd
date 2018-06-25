@@ -10,9 +10,9 @@ generate_st_samples(graph, ter_number, prob)
 \item{graph}{an igraph graph; should be undirected, otherwise it is converted to undirected.}
 
 \item{ter_number}{a numeric vector; each element indicates the number of terminals to be selected and length of vector
-indecates the number of terminal sets to be picked.}
+indicates the number of terminal sets to be picked.}
 
-\item{prob}{a numeric vector of the same length as ter_number; prob[i] defines a propability with which each
+\item{prob}{a numeric vector of the same length as ter_number; prob[i] defines a probability with which each
 next node accepted or rejected while selecting ter_number[i] terminals.}
 }
 \value{
@@ -23,8 +23,6 @@ Provides random walk procedure. Starting from the randomly selected node, choose
              randomly, until given number of terminals won't be found.
 }
 \examples{
-library(igraph)
-
 generate_st_samples(graph = graph("Zachary"),
                     ter_number = c(3, 4),
                     prob = c(0.1, 0.2))

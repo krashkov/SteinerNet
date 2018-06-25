@@ -575,8 +575,6 @@ check_input <- function (type, terminals, glist) {
 #' @seealso \code{\link{generate_st_samples}}
 #' 
 #' @examples
-#' library(igraph)
-#' 
 #' steinertree(type = "RSP", optimize = FALSE,
 #'             terminals = c(1, 3),
 #'             graph = graph("Cubical"),

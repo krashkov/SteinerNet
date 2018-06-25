@@ -71,8 +71,6 @@ simulation_tests <- function (type, repeattimes, optimize, glist, ter_list) {
 #' @seealso \code{\link{generate_st_samples}}, \code{\link{steinertree}}
 #' 
 #' @examples
-#' library(igraph)
-#' 
 #' g <- graph("Cubical")
 #' 
 #' steiner_simulation(type = c("SP", "KB", "SPM"),

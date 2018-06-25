@@ -29,8 +29,6 @@ For each method a plot with comparison of algorithms (pointed in type variable) 
 This function plots the comparison results of simulated data ans stores it in PDF file.
 }
 \examples{
-library(igraph)
-
 g <- graph("Cubical")
 
 data <- steiner_simulation(type = c("SP", "KB", "SPM"),

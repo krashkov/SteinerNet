@@ -41,8 +41,6 @@ gRandWalk <- function (glist, numofterminals, terminalpr) {
 #' @return A list of the same length as ter_number. Each element of list contains a vector of ids of selected vertices.
 #' 
 #' @examples
-#' library(igraph)
-#' 
 #' generate_st_samples(graph = graph("Zachary"),
 #'                     ter_number = c(3, 4),
 #'                     prob = c(0.1, 0.2))

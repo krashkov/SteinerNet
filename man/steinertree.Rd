@@ -48,8 +48,6 @@ Firstly, if input graph doesn't have name attribute, one is created, otherwise r
          Note, that before algorithm is running all vertices will be colored in yellow and terminals will be colored in red.
 }
 \examples{
-library(igraph)
-
 steinertree(type = "RSP", optimize = FALSE,
             terminals = c(1, 3),
             graph = graph("Cubical"),
