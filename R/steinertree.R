@@ -592,7 +592,7 @@ check_input <- function (type, terminals, glist) {
 #'                identification: an empirical study", BMC Bioinformatics 2013 14:144
 #'                
 #'             5. F K. Hwang, D S. Richards and P Winter, "The steiner tree Problem", Kruskal-Based Heuristic Section
-#'                4.1.4, The Optimal solution for stiner trees on networks, ISBN: 978-0-444-89098-6.
+#'                4.1.4, The Optimal solution for steiner trees on networks, ISBN: 978-0-444-89098-6.
 #'             
 #' @export
 ####------------------------------------- End Documentation -------------------------------------####
