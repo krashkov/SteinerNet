@@ -405,7 +405,7 @@ steinertree8 <- function (optimize, terminals, glist, color) {
 }
 
 
-
+# Exact algorithm
 steinerexact <- function (terminals, glist, color) {
         rwhile <- function (lim) {
                 if (get("runloop", envir = en)) {
@@ -466,14 +466,15 @@ steinerexact <- function (terminals, glist, color) {
                 green_guys <- lapply(stgraphlist, function (x) V(x)$name)
                 green_guys <- unique(unlist(green_guys))
         
-                V(g)[green_guys]$color            <- "green"
-                V(g)[as.numeric(terminals)]$color <- "red"
+                V(g)[green_guys]$color <- "green"
+                #V(g)[as.numeric(terminals)]$color <- "red"
+                V(g)[terminals]$color  <- "red"
         
                 stgraphlist2[[length(stgraphlist2) + 1]] <- g
                 stgraphlist2[[length(stgraphlist2) + 1]] <- stgraphlist
                 stgraphlist <- stgraphlist2
         }
-    
+        
         return(stgraphlist)
 }
 
