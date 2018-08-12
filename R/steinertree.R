@@ -182,12 +182,14 @@ steinertree2 <- function (optimize, terminals, glist, color) {
 }
 
 
-
+# Minimum spanning tree based approximation (Kruskal's minimum spanning tree algorithm)
 steinertree3 <- function (optimize, terminals, glist, color) {
         makesubtrees <- function (x) {
                 if ( !is.na(any(match(t3, x))) )
+                	#return(union(subtrees[[x]],
+                	#	     found[[grep(1, match(t3, x))]][[1]]))
                         return(union(subtrees[[x]],
-                                     found[[grep(1, match(t3, x))]][[1]]))
+                                     names(found[[grep(1, match(t3, x))]][[1]])))
                 else return(subtrees[[x]])
         }
         
@@ -201,18 +203,21 @@ steinertree3 <- function (optimize, terminals, glist, color) {
         terminals <- subtrees
         nsubtrees <- lapply(r, function (r) setdiff(terminals, subtrees[r]))
     
-        # While all terminals are not added to subtree
+        # Proceed until all terminals won't be added to a subtree
         while (length(subtrees) > 1) {
+        	# Find shortest paths between different Steiner Trees and compute their lengths
                 r     <- 1:length(subtrees)
-                paths <- lapply(r,
-                                function (r) lapply(subtrees[[r]],
-                                                    function (x, y) get.all.shortest.paths(g, x, y)$res,
-                                                    y = nsubtrees[[r]]))
+                #paths <- lapply(r, function (r) lapply(subtrees[[r]],
+                #				       function (x, y) get.all.shortest.paths(g, x, y)$res,
+                #				       y = nsubtrees[[r]]))
+                paths <- lapply(r, function (r) lapply(subtrees[[r]],
+                                                       function (x, y) get.all.shortest.paths(g, x, y)$res,
+                                                       y = unlist(nsubtrees[[r]])))
                 
-                # t is list of number all pathes from all nodes in subgraph
                 r <- 1:length(paths)
                 t <- sapply(r, function (r) sapply(paths[[r]][[1]], length))
-        
+                
+                # Compute a minimum for each set of lengths from each Steiner tree to other trees
                 if (class(t) == "list" | class(t) == "integer") {
                         r  <- 1:length(t)
                         t2 <- sapply(r, function (x) min(t[[x]]))
@@ -221,11 +226,11 @@ steinertree3 <- function (optimize, terminals, glist, color) {
                         r  <- 1:dim(t)[2]
                         t2 <- sapply(r, function (r) min(t[, r]))
                 }
-        
+                
+                # Find a minimum among minimum length and paths corresponding to it
                 t3    <- which(t2 == min(t2))
                 t3len <- 1:length(t3)
-        
-                # t4 is the index of min distanc paths between each subtree
+                
                 if (length(paths) > 1) {
                         if (class(t) == "list" || class(t) == "integer" )
                                 t4 <- lapply(t3len, function (x) which(t[[t3[x]]] == min(t[[t3[x]]])))
@@ -238,11 +243,10 @@ steinertree3 <- function (optimize, terminals, glist, color) {
                         print("Error")
                 }
         
-                # We merge the terminals subgraphs and their paths here
+                # Merge subgraphs and paths
                 subtrees <- lapply(1:length(subtrees), function (x) makesubtrees(x))
         
-                # We delete repeated subtrees here
-                # We presume here length(subtrees) is more than 1
+                # Delete repeated subtrees (presume that length is more than 1)
                 i <- 1
                 j <- 2
                 while (i <= (length(subtrees) - 1)) {
@@ -259,7 +263,8 @@ steinertree3 <- function (optimize, terminals, glist, color) {
                 }
                 nsubtrees <- lapply(1:length(subtrees), function (x) setdiff(terminals, subtrees[[x]]))
         }
-    
+        
+        # Perform "optimization": find minimum spanning tree and remove nodes of degree 1
         if (optimize) {
                 steinert <- minimum.spanning.tree(induced_subgraph(g, subtrees[[1]]))
                 a   <- V(steinert)$color
@@ -274,8 +279,9 @@ steinertree3 <- function (optimize, terminals, glist, color) {
     
         glst <- c()
         if (color) {
-                V(g)[subtrees[[1]]]$color         <- "green"
-                V(g)[as.numeric(terminals)]$color <- "red"
+                V(g)[subtrees[[1]]]$color     <- "green"
+                V(g)[unlist(terminals)]$color <- "red"
+                #V(g)[terminals]$color <- "red"
                 
                 glst[[length(glst) + 1]]  <- g
         }
