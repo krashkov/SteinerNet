@@ -1,8 +1,10 @@
+# All shortest paths between terminals (ASP)
 asp_steiner <- function (optimize, terminals, glist, color) {
         g <- glist[[1]]
     
         paths <- lapply(terminals, function (x) get.all.shortest.paths(g, x, terminals)$res)
-        nodes <- unique(unlist(paths))
+        #nodes <- unique(unlist(paths))
+        nodes <- unique(names(unlist(paths)))
         
         if (optimize) {
                 steinert <- minimum.spanning.tree(induced_subgraph(graph = g, vids = nodes))
