@@ -303,6 +303,7 @@ steinertree3 <- function (optimize, terminals, glist, color) {
 
 
 
+# Sub-graph of merged steiner trees (SPM or STM)
 steinertree8 <- function (optimize, terminals, glist, color) {
         g <- glist[[1]]
         
@@ -324,7 +325,8 @@ steinertree8 <- function (optimize, terminals, glist, color) {
     
         # Put in queue paths with minimal lengths
         for (i in 1:length(t2))
-                queue[length(queue) + 1] <- paths[t2[i]]
+        	#queue[length(queue) + 1] <- paths[t2[i]]
+                queue[[length(queue) + 1]] <- names(unlist(paths[t2[i]]))
     
         index <- length(t2)
         while (index > 0) {
@@ -333,6 +335,7 @@ steinertree8 <- function (optimize, terminals, glist, color) {
                 index     <- index - 1
         
                 if (length(intersect(unlist(terminals), unlist(edgeslist))) == length(terminals)) {
+                #if (length(intersect(unlist(terminals), names(unlist(edgeslist)))) == length(terminals)) {
                         graph_is_new <- TRUE
             
                         if (length(results_queue) == 0)
@@ -350,7 +353,8 @@ steinertree8 <- function (optimize, terminals, glist, color) {
                         if (graph_is_new == TRUE)
                                 results_queue[length(results_queue) + 1] <- edgeslist
                 } else {
-                        subtree  <- intersect(unlist(terminals), unlist(edgeslist))
+                	subtree  <- intersect(unlist(terminals), unlist(edgeslist))
+                        #subtree  <- intersect(unlist(terminals), names(unlist(edgeslist)))
                         nsubtree <- setdiff(terminals, subtree)
                         
                         paths    <- get.all.shortest.paths(g, subtree[length(subtree)], nsubtree)
@@ -360,7 +364,8 @@ steinertree8 <- function (optimize, terminals, glist, color) {
                         t2 <- which(t == min(t))
 
                         for (i in 1:length(t2))
-                                queue[[index + i]] <- union(unlist(edgeslist), unlist(paths[t2[i]]))
+                        	#queue[[index + i]] <- union(unlist(edgeslist), unlist(paths[t2[i]]))
+                                queue[[index + i]] <- union(unlist(edgeslist), names(unlist(paths[t2[i]])))
                         
                         index <- index + length(t2)
                 }
@@ -394,7 +399,8 @@ steinertree8 <- function (optimize, terminals, glist, color) {
         }
     
         if (color) {
-                V(g)[as.numeric(terminals)]$color <- "red"
+        	#V(g)[as.numeric(terminals)]$color <- "red"
+                V(g)[terminals]$color <- "red"
                 
                 glst[[length(glst) + 1]] <- g
                 glst[[length(glst) + 1]] <- steinert_list
@@ -656,6 +662,6 @@ steinertree <- function (type, repeattimes = 70, optimize = TRUE, terminals, gra
                         result <- merge_steiner(treelist = result)
                 }
         }
-    
+        
         return(result)
 }
