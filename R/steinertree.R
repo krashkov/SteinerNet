@@ -102,24 +102,24 @@ appr_steiner <- function (repeattimes, optimize, terminals, glist, color) {
 }
 
 
-
+# Shortest Path Based Approximation
 steinertree2 <- function (optimize, terminals, glist, color) {
-        edges <- c()
         g     <- glist[[1]]
-    
+        
+        # Pick a terminal randomly and Form a subtree (sub-graph G')
         prob     <- sample(1:length(terminals), 1)
         subtree  <- terminals[[prob]]
         nsubtree <- setdiff(terminals, subtree)
-    
-        while ( !all(is.element(terminals, intersect(subtree, terminals))) ) {
-                
-                paths <- lapply(subtree, function (x) get.all.shortest.paths(g, x, nsubtree))
         
+        # Proceed until all terminals not in G′
+        while ( !all(is.element(terminals, intersect(subtree, terminals))) ) {
+                # Compute shortest paths and their lengths between each node in subtree (G') and the remaining nodes
+                paths <- lapply(subtree, function (x) get.all.shortest.paths(g, x, nsubtree))
+                
                 r <- 1:length(paths)
                 t <- sapply(r, function (r) sapply(paths[[r]]$res, length))
         
-                # Caution: length in list returns the lengh of the first cat but in array it returns
-                # number  of all enteries, so I use length for paths, but dim for t
+                # Compute a minimum for each set of lengths from each node to other nodes
                 if (class(t) == "list" || class(t) == "integer") {
                         r  <- 1:length(t)
                         t2 <- sapply(r, function (r) min(t[[r]]))
@@ -129,26 +129,33 @@ steinertree2 <- function (optimize, terminals, glist, color) {
                         t2 <- sapply(r, function (r) min(t[, r]))
                 }
         
-                # t3 is index of minimums in the minimum paths
+                # Find a path with minimum among minimum length
                 t3 <- which(t2 == min(t2))
-        
+                
+                # Note, graph has to have name attribute, because in found variable we assign names
+                # of vertices. It is much more convenient to work with names, not with ids.
                 if (length(paths) > 1) {
                         if (class(t) == "list" || class(t) == "integer")
                                 t4 <- which(t[[t3[1]]] == min(t[[t3[1]]]))
             
                         if (class(t) == "matrix")
                                 t4 <- which( t[ , t3[1]] == min(t[ , t3[1]]) )
-            
-                        edges <- union(edges, paths[[t3[1]]][t4][1]$res)
-                        found <- unlist(paths[[t3[1]]][t4][1]$res)
+                        
+                        #found <- unlist(paths[[t3[1]]][t4][1]$res)
+                        found <- names(unlist(paths[[t3[1]]][t4][1]$res))
                 } else {
-                        edges <- union(edges, paths[[1]][t3][1]$res)
-                        found <- unlist(paths[[1]][t3][1]$res)
+                	#found <- unlist(paths[[1]][t3][1]$res)
+                	found <- names(unlist(paths[[1]][t3][1]$res))
                 }
-                subtree  <- union(subtree, V(g)[unique(found)])
-                nsubtree <- setdiff(nsubtree, V(g)[unique(found)])
+                
+                # Add all vertices from all shortest paths to subtree
+                #subtree  <- union(subtree, V(g)[unique(found)])
+                subtree  <- union(subtree, V(g)[unique(found)]$name)
+                #nsubtree <- setdiff(nsubtree, V(g)[unique(found)])
+                nsubtree <- setdiff(nsubtree, V(g)[unique(found)]$name)
         }
-    
+        
+        # Perform "optimization": find minimum spanning tree and remove nodes of degree 1
         if (optimize) {
                 steinert <- minimum.spanning.tree(induced_subgraph(g, subtree))
                 a   <- V(steinert)$color
@@ -163,8 +170,8 @@ steinertree2 <- function (optimize, terminals, glist, color) {
     
         glst <- c()
         if (color) {
-                V(g)[subtree]$color               <- "green"
-                V(g)[as.numeric(terminals)]$color <- "red"
+                V(g)[subtree]$color   <- "green"
+                V(g)[terminals]$color <- "red"
                 
                 glst[[length(glst) + 1]] <- g
         }
@@ -492,32 +499,32 @@ check_input <- function (type, terminals, glist) {
         if (length(V(g)) == 0 )
                 stop("Error: The graph doesn't contain vertices.")
     
-        options(warn = -1)
-        if (is.null(V(g)$name)) {
-                # creating name attribute
-                V(g)$name <- as.character(1:length(V(g)))
-        } else {
-                # creating new name and realname attributes
-                V(g)$realname <- V(g)$name
-                V(g)$name     <- as.character(1:length(V(g)))
-        }
+        #options(warn = -1)
+        #if (is.null(V(g)$name)) {
+        #        # creating name attribute
+        #        V(g)$name <- as.character(1:length(V(g)))
+        #} else {
+        #        # creating new name and realname attributes
+        #        V(g)$realname <- V(g)$name
+        #        V(g)$name     <- as.character(1:length(V(g)))
+        #}
     
         # Mathcing names of vertices and terminals, if possible
     
-        if (class(terminals) == "character" & anyNA(as.integer(terminals))) {
-                # terminals contain realname of vertice
-                if (sum(terminals %in% V(g)$realname) != length(terminals)) {
-                        stop("Error: vertices names do not contain terminal names")
-                } else {
-                        # Convert realnames of terminals to names (character id's)
-                        terminals <- V(g)$name[match(terminals, V(g)$realname)]
-                }
-        } else if ((class(terminals) == "numeric" || class(terminals) == "integer") | !anyNA(as.integer(terminals)) ) {
-                # terminals contains id's of vertices
-                terminals <- V(g)$name[as.integer(terminals)]
-        } else
-                print("Error: invalid type of terminals")
-        options(warn = 0)
+        #if (class(terminals) == "character" & anyNA(as.integer(terminals))) {
+        #        # terminals contain realname of vertice
+        #        if (sum(terminals %in% V(g)$realname) != length(terminals)) {
+        #                stop("Error: vertices names do not contain terminal names")
+        #        } else {
+        #                # Convert realnames of terminals to names (character id's)
+        #                terminals <- V(g)$name[match(terminals, V(g)$realname)]
+        #        }
+        #} else if ((class(terminals) == "numeric" || class(terminals) == "integer") | !anyNA(as.integer(terminals)) ) {
+        #        # terminals contains id's of vertices
+        #        terminals <- V(g)$name[as.integer(terminals)]
+        #} else
+        #        print("Error: invalid type of terminals")
+        #options(warn = 0)
     
         V(g)$color            <- "yellow"
         V(g)[terminals]$color <- "red"
