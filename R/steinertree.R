@@ -524,32 +524,32 @@ check_input <- function (type, terminals, glist) {
         if (length(V(g)) == 0 )
                 stop("Error: The graph doesn't contain vertices.")
     
-        #options(warn = -1)
-        #if (is.null(V(g)$name)) {
-        #        # creating name attribute
-        #        V(g)$name <- as.character(1:length(V(g)))
-        #} else {
-        #        # creating new name and realname attributes
-        #        V(g)$realname <- V(g)$name
-        #        V(g)$name     <- as.character(1:length(V(g)))
-        #}
+        if (is.null(V(g)$name)) {
+                # creating name attribute
+                V(g)$name <- as.character(1:length(V(g)))
+                attr_flag <- FALSE
+        } else {
+                # creating new name and realname attributes
+                V(g)$realname <- V(g)$name
+                V(g)$name     <- as.character(1:length(V(g)))
+                attr_flag <- TRUE
+        }
     
         # Mathcing names of vertices and terminals, if possible
     
-        #if (class(terminals) == "character" & anyNA(as.integer(terminals))) {
-        #        # terminals contain realname of vertice
-        #        if (sum(terminals %in% V(g)$realname) != length(terminals)) {
-        #                stop("Error: vertices names do not contain terminal names")
-        #        } else {
-        #                # Convert realnames of terminals to names (character id's)
-        #                terminals <- V(g)$name[match(terminals, V(g)$realname)]
-        #        }
-        #} else if ((class(terminals) == "numeric" || class(terminals) == "integer") | !anyNA(as.integer(terminals)) ) {
-        #        # terminals contains id's of vertices
-        #        terminals <- V(g)$name[as.integer(terminals)]
-        #} else
-        #        print("Error: invalid type of terminals")
-        #options(warn = 0)
+        if (class(terminals) == "character") {
+                # terminals contain realname of vertice
+                if (sum(terminals %in% V(g)$realname) != length(terminals)) {
+                        stop("Error: vertices names do not contain terminal names")
+                } else {
+                        # Convert realnames of terminals to names (character id's)
+                        terminals <- V(g)$name[match(terminals, V(g)$realname)]
+                }
+        } else if (class(terminals) == "numeric" | class(terminals) == "integer") {
+                # terminals contains id's of vertices
+                terminals <- V(g)$name[terminals]
+        } else
+                print("Error: invalid type of terminals")
     
         V(g)$color            <- "yellow"
         V(g)[terminals]$color <- "red"
@@ -562,8 +562,39 @@ check_input <- function (type, terminals, glist) {
         varlist      <- c()
         varlist[[1]] <- g
         varlist[[2]] <- terminals
+        varlist[[3]] <- attr_flag
         
         return(varlist)
+}
+
+
+
+restore_name_attribute <- function (attr_flag, numVertices, type, result, color) {
+	
+	if (color) {
+		if (attr_flag) {
+			V(result[[1]])$name <- V(result[[1]])$realname
+			result[[1]] <- delete_vertex_attr(result[[1]], 'realname')
+		}
+	}
+	
+	if (type == "EXA" | type == "SPM") {
+		if (attr_flag) {
+			numSteiner = length(result[[length(result)]])
+			
+			for (i in 1:numSteiner) {
+				V(result[[length(result)]][[i]])$name <- V(result[[length(result)]][[i]])$realname
+				result[[length(result)]][[i]] <- delete_vertex_attr(result[[length(result)]][[i]], 'realname')
+			}
+		}
+	} else {
+		if (attr_flag) {
+			V(result[[length(result)]])$name <- V(result[[length(result)]])$realname
+			result[[length(result)]] <- delete_vertex_attr(result[[length(result)]], 'realname')
+		}
+	}
+	
+	return(result)
 }
 
 
@@ -637,6 +668,7 @@ steinertree <- function (type, repeattimes = 70, optimize = TRUE, terminals, gra
     
         glist[[1]] <- varlist[[1]]
         terminals  <- varlist[[2]]
+        attr_flag  <- varlist[[3]]
     
         if (type == "SP")
                 result <- steinertree2(optimize = optimize, terminals = terminals, glist = glist, color = color)
@@ -656,7 +688,9 @@ steinertree <- function (type, repeattimes = 70, optimize = TRUE, terminals, gra
     
         if (type == "ASP")
                 result <- asp_steiner(optimize = optimize, terminals = terminals, glist = glist, color = color)
-    
+        
+        result <- restore_name_attribute(attr_flag, numVertices = length(V(g)), type, result, color)
+        
         if (merge & (type == "EXA" | type == "SPM")) {
                 if (color) {
                         result[[2]] <- merge_steiner(treelist = result[[2]])
