@@ -1,11 +1,11 @@
 ####--------------------------------------- Documentation ---------------------------------------####
 #' Plot simulated data
 #' 
-#' @description This function plots the comparison results of simulated data ans stores it in PDF file.
+#' @description This function plots the comparison results of simulated data and stores it in PDF file.
 #' 
 #' @usage steiner_comparison_plots(type, method, data, outputname)
 #' 
-#' @param type a character vector, which indicates types of algorithms to perform. Can be
+#' @param type a character vector, which indicates types of algorithms to analyse. Can be
 #'             "EXA", "SP", "KB", "RSP", "SPM" or "ASP".
 #' @param method a character vector; specifies a calculated parameter based on which comparison is performed. Can be 
 #'               "runtime" (for time of execution), "log10runtime", "edge" (for number of edges in resultant steiner tree),

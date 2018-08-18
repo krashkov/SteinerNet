@@ -5,7 +5,7 @@
 #' 
 #' @usage steiner_comparison_wilcox(type, method, data)
 #' 
-#' @param type a character vector, which indicates type of algorithms to perform. Can be
+#' @param type a character vector, which indicates type of algorithms to analyse. Can be
 #'             "EXA", "SP", "KB", "RSP", "SPM" or "ASP".
 #' @param method a character scalar; specifies a calculated parameter based on which comparison is performed. Can be 
 #'               "runtime" (for time of execution), "log10runtime" "edge" (for number of edges in resultant steiner tree),

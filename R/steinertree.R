@@ -113,7 +113,7 @@ appr_steiner <- function (repeattimes, optimize, terminals, glist, color) {
 
 
 
-# Shortest Path Based Approximation
+# Shortest Path Based Approximation (SP)
 steinertree2 <- function (optimize, terminals, glist, color) {
         g <- glist[[1]]
         
@@ -538,7 +538,7 @@ check_input <- function (type, terminals, glist) {
         # Mathcing names of vertices and terminals, if possible
     
         if (class(terminals) == "character") {
-                # terminals contain realname of vertice
+                # terminals contain realname of vertices
                 if (sum(terminals %in% V(g)$realname) != length(terminals)) {
                         stop("Error: vertices names do not contain terminal names")
                 } else {
@@ -587,7 +587,7 @@ restore_name_attribute <- function (attr_flag, numVertices, type, result, color)
 				result[[length(result)]][[i]] <- delete_vertex_attr(result[[length(result)]][[i]], 'realname')
 			}
 		}
-	} else {
+        } else {
 		if (attr_flag) {
 			V(result[[length(result)]])$name <- V(result[[length(result)]])$realname
 			result[[length(result)]] <- delete_vertex_attr(result[[length(result)]], 'realname')
@@ -612,8 +612,7 @@ restore_name_attribute <- function (attr_flag, numVertices, type, result, color)
 #' @param repeattimes a numeric scalar to specify "RSP" algorithm; number of times the optimization procedure is repeated.
 #' @param optimize a logical scalar to specify all algorithms except "EXA"; if TRUE, an optimization of the resultant
 #'                 steiner tree is performed, otherwise nothing is done.
-#' @param terminals a numeric or character vector with ids of terminals or a character vector with names of vertices 
-#'                  (only if vertices have name attribute).
+#' @param terminals a numeric vector (ids of terminals are passed) or character vector (vertices must have 'name' attribute).
 #' @param graph an igraph graph; should be undirected, otherwise it is converted to undirected.
 #' @param color a logical scalar; whether to return an original graph with terminals colored in red and
 #'              steiner nodes colored in green. Note, if several trees will be found, steiner nodes from all trees
@@ -627,13 +626,8 @@ restore_name_attribute <- function (attr_flag, numVertices, type, result, color)
 #'         (color = TRUE) Returns a list, first element of which is a colored original graph and second element is
 #'         a steiner tree (or a graph of merged trees) or list of steiner trees.
 #'         
-#' @details Firstly, if input graph doesn't have name attribute, one is created, otherwise realname attribute is created
-#'          and names is stored in it. In its turn name attribute will contain character ids of vertices. Further,
-#'          if the terminals variable has character type and it can not be converted to numeric type, the terminals are searched
-#'          among realnames. If the terminals variable has numeric type or it can be converted to numeric type,
-#'          it is considered, ids of vertices is passed.
-#'          
-#'          Note, that before algorithm is running all vertices will be colored in yellow and terminals will be colored in red.
+#' @details If input graph doesn't have 'name' attribute, one is created. In this case it will contain character ids of vertices.
+#'          Also before execution all vertices will be colored in yellow and terminals will be colored in red.
 #' 
 #' @seealso \code{\link{generate_st_samples}}
 #' 
