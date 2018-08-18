@@ -1,5 +1,9 @@
 # SteinerNet
 
+![](http://www.r-pkg.org/badges/version-ago/SteinerNet)
+![](http://cranlogs.r-pkg.org/badges/grand-total/SteinerNet)
+
+
 The Steiner tree problem on unweighted graphs seeks a minimum subtree (i.e. subtree with minimal number of edges), containing a given subset of the vertices (terminals). This problem is NP-complete. This package provides several heuristic and one exact approach for finding Steiner trees, as well as tools for analyzing resultant trees and comparing different algorithms.
 
 This R package was originally applied to analyzing biological networks. For more information about algorithms and their application, see [original article](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-144) and [tutorial](https://github.com/krashkov/SteinerNet/blob/master/vignettes/tutorial.pdf).
@@ -13,8 +17,6 @@ The installation process may differ to different versions of package. See inform
 ### Version 3.0.0
 
 This is the current version of the package. It only requires installation of `igraph` package.
-
-    install.packages("igraph")
 
     install.packages("SteinerNet")
 
@@ -53,6 +55,12 @@ https://cran.r-project.org/src/contrib/Archive/SteinerNet/
 
 
 # News
+
+### August 2018
+
+SteinerNet v3.0.1 release.
+
+* If vertices of input graph of `steinertree` function has a `name` attribute, vertices of the output graph won't have `realname` attribute. The original names will be still at `name` attribute.
 
 ### June 2018
 
