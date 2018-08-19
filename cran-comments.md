@@ -1,6 +1,5 @@
 ## Test environments
 
-* local macOS 10.13.5 install, R 3.5.0
 * local Linux Ubuntu 18.04 LTS install, R 3.5.0
 * win-builder (devel and release)
 
