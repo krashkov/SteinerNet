@@ -35,7 +35,7 @@ asp_steiner <- function (optimize, terminals, glist, color) {
 # Randomized all shortest paths approximation (RSP)
 appr_steiner <- function (repeattimes, optimize, terminals, glist, color) {
         set <- c()
-        g   <- glist[[1]]
+        g <- glist[[1]]
         
         # Start with the sub-graph G* consisting of all nodes and edges appearing on shortest paths between terminals
         paths <- lapply(terminals, function (x) get.all.shortest.paths(g, x, terminals)$res)
@@ -122,7 +122,7 @@ steinertree2 <- function (optimize, terminals, glist, color) {
         subtree  <- terminals[[prob]]
         nsubtree <- setdiff(terminals, subtree)
         
-        # Proceed until all terminals not in G′
+        # Proceed until all terminals not in G'
         while ( !all(is.element(terminals, intersect(subtree, terminals))) ) {
                 # Compute shortest paths and their lengths between each node in subtree (G') and the remaining nodes
                 paths <- lapply(subtree, function (x) get.all.shortest.paths(g, x, nsubtree))
@@ -569,7 +569,7 @@ check_input <- function (type, terminals, glist) {
 
 
 
-restore_name_attribute <- function (attr_flag, numVertices, type, result, color) {
+restore_name_attribute <- function (attr_flag, type, result, color) {
 	
 	if (color) {
 		if (attr_flag) {
@@ -580,7 +580,7 @@ restore_name_attribute <- function (attr_flag, numVertices, type, result, color)
 	
 	if (type == "EXA" | type == "SPM") {
 		if (attr_flag) {
-			numSteiner = length(result[[length(result)]])
+			numSteiner <- length(result[[length(result)]])
 			
 			for (i in 1:numSteiner) {
 				V(result[[length(result)]][[i]])$name <- V(result[[length(result)]][[i]])$realname
@@ -683,7 +683,7 @@ steinertree <- function (type, repeattimes = 70, optimize = TRUE, terminals, gra
         if (type == "ASP")
                 result <- asp_steiner(optimize = optimize, terminals = terminals, glist = glist, color = color)
         
-        result <- restore_name_attribute(attr_flag, numVertices = length(V(g)), type, result, color)
+        result <- restore_name_attribute(attr_flag, type, result, color)
         
         if (merge & (type == "EXA" | type == "SPM")) {
                 if (color) {
