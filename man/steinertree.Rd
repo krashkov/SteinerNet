@@ -16,8 +16,7 @@ steinertree(type, repeattimes = 70, optimize = TRUE, terminals,
 \item{optimize}{a logical scalar to specify all algorithms except "EXA"; if TRUE, an optimization of the resultant
 steiner tree is performed, otherwise nothing is done.}
 
-\item{terminals}{a numeric or character vector with ids of terminals or a character vector with names of vertices 
-(only if vertices have name attribute).}
+\item{terminals}{a numeric vector (ids of terminals are passed) or character vector (vertices must have 'name' attribute).}
 
 \item{graph}{an igraph graph; should be undirected, otherwise it is converted to undirected.}
 
@@ -39,13 +38,8 @@ a list with trees or merge them}
 A set of functions for finding Steiner Tree. Includes both exact and heuristic approaches.
 }
 \details{
-Firstly, if input graph doesn't have name attribute, one is created, otherwise realname attribute is created
-         and names is stored in it. In its turn name attribute will contain character ids of vertices. Further,
-         if the terminals variable has character type and it can not be converted to numeric type, the terminals are searched
-         among realnames. If the terminals variable has numeric type or it can be converted to numeric type,
-         it is considered, ids of vertices is passed.
-         
-         Note, that before algorithm is running all vertices will be colored in yellow and terminals will be colored in red.
+If input graph doesn't have 'name' attribute, one is created. In this case it will contain character ids of vertices.
+         Also before execution all vertices will be colored in yellow and terminals will be colored in red.
 }
 \examples{
 steinertree(type = "RSP", optimize = FALSE,

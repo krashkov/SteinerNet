@@ -7,7 +7,7 @@
 steiner_comparison_plots(type, method, data, outputname)
 }
 \arguments{
-\item{type}{a character vector, which indicates types of algorithms to perform. Can be
+\item{type}{a character vector, which indicates types of algorithms to analyse. Can be
 "EXA", "SP", "KB", "RSP", "SPM" or "ASP".}
 
 \item{method}{a character vector; specifies a calculated parameter based on which comparison is performed. Can be 
@@ -26,7 +26,7 @@ For each method a plot with comparison of algorithms (pointed in type variable) 
         then their number is printed, otherwise the range is printed.
 }
 \description{
-This function plots the comparison results of simulated data ans stores it in PDF file.
+This function plots the comparison results of simulated data and stores it in PDF file.
 }
 \examples{
 g <- graph("Cubical")

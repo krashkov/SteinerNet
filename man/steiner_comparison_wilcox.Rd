@@ -7,7 +7,7 @@
 steiner_comparison_wilcox(type, method, data)
 }
 \arguments{
-\item{type}{a character vector, which indicates type of algorithms to perform. Can be
+\item{type}{a character vector, which indicates type of algorithms to analyse. Can be
 "EXA", "SP", "KB", "RSP", "SPM" or "ASP".}
 
 \item{method}{a character scalar; specifies a calculated parameter based on which comparison is performed. Can be 
