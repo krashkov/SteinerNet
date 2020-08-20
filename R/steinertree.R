@@ -131,11 +131,11 @@ steinertree2 <- function (optimize, terminals, glist, color) {
                 t <- sapply(r, function (r) sapply(paths[[r]]$res, length))
         
                 # Compute a minimum for each set of lengths from each node to other nodes
-                if (class(t) == "list" || class(t) == "integer") {
+                if ("list" %in% class(t) || "integer" %in% class(t)) {
                         r  <- 1:length(t)
                         t2 <- sapply(r, function (r) min(t[[r]]))
                 }
-                if (class(t) == "matrix") {
+                if ("matrix" %in% class(t)) {
                         r  <- 1:dim(t)[2]
                         t2 <- sapply(r, function (r) min(t[, r]))
                 }
@@ -146,10 +146,10 @@ steinertree2 <- function (optimize, terminals, glist, color) {
                 # Note, graph has to have name attribute, because in found variable we assign names
                 # of vertices. It is much more convenient to work with names, not with ids.
                 if (length(paths) > 1) {
-                        if (class(t) == "list" || class(t) == "integer")
+                        if ("list" %in% class(t) || "integer" %in% class(t))
                                 t4 <- which(t[[t3[1]]] == min(t[[t3[1]]]))
             
-                        if (class(t) == "matrix")
+                        if ("matrix" %in% class(t))
                                 t4 <- which( t[ , t3[1]] == min(t[ , t3[1]]) )
                         
                         #found <- unlist(paths[[t3[1]]][t4][1]$res)
@@ -230,11 +230,11 @@ steinertree3 <- function (optimize, terminals, glist, color) {
                 t <- sapply(r, function (r) sapply(paths[[r]][[1]], length))
                 
                 # Compute a minimum for each set of lengths from each Steiner tree to other trees
-                if (class(t) == "list" | class(t) == "integer") {
+                if ("list" %in% class(t) | "integer" %in% class(t)) {
                         r  <- 1:length(t)
                         t2 <- sapply(r, function (x) min(t[[x]]))
                 }
-                if (class(t) == "matrix") {
+                if ("matrix" %in% class(t)) {
                         r  <- 1:dim(t)[2]
                         t2 <- sapply(r, function (r) min(t[, r]))
                 }
@@ -244,9 +244,9 @@ steinertree3 <- function (optimize, terminals, glist, color) {
                 t3len <- 1:length(t3)
                 
                 if (length(paths) > 1) {
-                        if (class(t) == "list" || class(t) == "integer" )
+                        if ("list" %in% class(t) || "integer" %in% class(t))
                                 t4 <- lapply(t3len, function (x) which(t[[t3[x]]] == min(t[[t3[x]]])))
-                        if (class(t) == "matrix")
+                        if ("matrix" %in% class(t))
                                 t4 <- lapply(t3len, function (x) which((t[ , t3[x]]) == min(t[ , t3[x]])))
                         
                         found <- lapply( t3len, function (x) paths[t3[x]][[1]][[1]][t4[[x]][1]] )
