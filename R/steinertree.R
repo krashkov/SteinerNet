@@ -513,7 +513,7 @@ check_input <- function (type, terminals, glist) {
     
         # Checking terminals
     
-        if (is.null(terminals) || is.na(terminals) || length(terminals) == 0)
+        if ( is.null(terminals) | any(is.na(terminals)) | (length(terminals) == 0) )
                 stop("Error: Terminals not found")
     
         # Checking graph
@@ -571,12 +571,12 @@ check_input <- function (type, terminals, glist) {
 
 restore_name_attribute <- function (attr_flag, type, result, color) {
 	
-	if (color) {
-		if (attr_flag) {
-			V(result[[1]])$name <- V(result[[1]])$realname
-			result[[1]] <- delete_vertex_attr(result[[1]], 'realname')
-		}
-	}
+        if (color) {
+                if (attr_flag) {
+                        V(result[[1]])$name <- V(result[[1]])$realname
+                        result[[1]] <- delete_vertex_attr(result[[1]], 'realname')
+                }
+        }
 	
 	if (type == "EXA" | type == "SPM") {
 		if (attr_flag) {
