@@ -113,7 +113,7 @@ This method is provided **only for comparison reasons**. In version 2.0 it was h
 `repeattimes`, and `merge` variables are ignored for "ASP".
 
 ```{r}
-steinertree(type = "RSP", terminals = terminal_nodes[[1]],
+steinertree(type = "ASP", terminals = terminal_nodes[[1]],
             graph = g, color = FALSE, merge = FALSE)
 ```
 
