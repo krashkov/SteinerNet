@@ -1,5 +1,9 @@
 # News
 
+### v3.1.0
+
+* Added support of R 4.0.0 and higher. Improved the code taking into account that since version 4.0.0 matrix objects also inherit from class "array".
+
 ### v3.0.1
 
 * If vertices of input graph of `steinertree` function has a `name` attribute, vertices of the output graph won't have `realname` attribute. The original names will be still at `name` attribute.

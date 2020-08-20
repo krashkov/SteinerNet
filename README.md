@@ -15,6 +15,8 @@ The installation process may differ to different versions of package. See inform
 
 ### Versions > 3.0.0
 
+To get the latest version of the package and install it from CRAN run the following command:
+
     install.packages("SteinerNet")
 
 ### Version 2.0
