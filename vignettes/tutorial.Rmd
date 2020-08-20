@@ -142,7 +142,7 @@ steinertree(type = "SPM", terminals = terminal_nodes[[1]],
 
 ## Optimization of resultant tree
 
-Optimization means returning the minimum spanning tree on resultant graph and removing all non-terminal nodes of degree one. **Note, that in version 2.0 this function was runned by default for several algorithms.** Again it is explicitly available in version 3.0 for the sake of convenience.
+Optimization means returning the minimum spanning tree on resultant graph and removing all non-terminal nodes of degree one. **Note, that in version 2.0 this function was run by default for several algorithms.** Again it is explicitly available in version 3.0 for the sake of convenience.
 
 If you want to reproduce results of the article, you need to specify `optimize = TRUE` for the following algorithms:
 
@@ -151,7 +151,7 @@ If you want to reproduce results of the article, you need to specify `optimize =
 * "RSP"
 * "SPM"
 
-For "EXA" algorithm this option is ignored. **Note, that in version 2.0 for "ASP" algorithm optimization was not avaliable at all.** It means, that experiments was condacted without further optimization.
+For "EXA" algorithm this option is ignored. **Note, that in version 2.0 for "ASP" algorithm optimization was not avaliable at all.** It means, that experiments was conducted without further optimization.
 
 ## Article results reproducibility
 
@@ -172,7 +172,7 @@ repetition <- rep(x = 0.5, 50)
 
 However, simultaneous work with the number of terminals selected and size of sets makes an output of some function too wired. So now you need to specify:
 
-* `ter_number`. Each element indicates the number of terminals to be selected and length of vector indecates the number of terminal sets to be picked.
+* `ter_number`. Each element indicates the number of terminals to be selected and length of vector indicates the number of terminal sets to be picked.
 * `prob`. prob[i] defines a propability with which each next node accepted or rejected while selecting ter_number[i] terminals. Usually this probability is the same for all terminals, so you may write something like this `prob = rep(0.5, #len of ter_number#)`
 
 The main difference is that you can now operate with **only one value** of number of terminal sets. So to reproduce results of the article, firstly, you need, for example, generate 50 terminal sets with 5 terminals in each.

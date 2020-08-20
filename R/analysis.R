@@ -33,7 +33,7 @@
 #' steiner_comparison_plots(type = c("SP", "KB"),
 #'                          method = c("runtime", "ter_freq"),
 #'                          data = data,
-#'                          outputname = "plot1.pdf")
+#'                          outputname = tempfile(pattern = "file", tmpdir = tempdir()))
 #' 
 #' @references 1. Afshin Sadeghi and Holger Froehlich, "Steiner tree methods for optimal sub-network
 #'                identification: an empirical study", BMC Bioinformatics 2013 14:144
@@ -53,7 +53,7 @@ steiner_comparison_plots <- function (type, method, data, outputname) {
         if (!is.character(outputname) | is.na(outputname))
                 stop("outputname is invalid")
     
-        pdf(outputname, paper = "a4")
+        grDevices::pdf(outputname, paper = "a4")
         par(mar = c(5 + length(type), 4, 2, 2))
     
         var_list  <- c()

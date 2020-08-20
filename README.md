@@ -5,7 +5,7 @@
 ![](http://cranlogs.r-pkg.org/badges/grand-total/SteinerNet)
 
 
-The Steiner tree problem on unweighted graphs seeks a minimum subtree (i.e. subtree with minimal number of edges), containing a given subset of the vertices (terminals). This problem is NP-complete. This package provides several heuristic and one exact approach for finding Steiner trees, as well as tools for analyzing resultant trees and comparing different algorithms.
+The Steiner tree problem on unweighted graphs seeks a minimum subtree (i.e. subtree with minimal number of edges), containing a given subset of the vertices (terminals). This problem is known to be NP-hard. This package provides several heuristic and one exact approach for finding Steiner trees, as well as tools for analyzing resultant trees and comparing different algorithms.
 
 This R package was originally applied to analyzing biological networks. For more information about algorithms and their application, see [original article](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-144) and [tutorial](https://github.com/krashkov/SteinerNet/blob/master/vignettes/tutorial.pdf).
 
@@ -14,6 +14,8 @@ This R package was originally applied to analyzing biological networks. For more
 The installation process may differ to different versions of package. See information below.
 
 ### Versions > 3.0.0
+
+To get the latest version of the package and install it from CRAN run the following command:
 
     install.packages("SteinerNet")
 
@@ -33,7 +35,7 @@ To install older versions of packages from CRAN, you need `install_version()` fr
 
 ### Versions < 2.0
 
-The installation process of older versions is similar to previous, but note, that they works with [`igraph0` package](https://cran.r-project.org/src/contrib/Archive/igraph0).
+The installation process of older versions is similar to previous, but note, that they works with [`igraph0` package](https://cran.r-project.org/src/contrib/Archive/igraph0/).
 
     install_version("igraph0", version = "0.5.7")
 

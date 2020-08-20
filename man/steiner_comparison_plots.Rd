@@ -40,7 +40,7 @@ data <- steiner_simulation(type = c("SP", "KB", "SPM"),
 steiner_comparison_plots(type = c("SP", "KB"),
                          method = c("runtime", "ter_freq"),
                          data = data,
-                         outputname = "plot1.pdf")
+                         outputname = tempfile(pattern = "file", tmpdir = tempdir()))
 
 }
 \references{
