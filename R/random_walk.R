@@ -13,7 +13,7 @@ gRandWalk <- function (glist, numofterminals, terminalpr) {
                 prob <- runif(1, min = 0, max = 1)
 
                 if (prob < terminalpr) {
-                        nodlist <- c(nodlist, V(g)[seed])
+                        nodlist <- c( nodlist, as.numeric(V(g)[seed]) )
                         nodlist <- unique(nodlist)
                         i <- length(nodlist)
                 }
