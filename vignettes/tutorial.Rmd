@@ -43,7 +43,7 @@ library(igraph)
 library(SteinerNet)
 ```
 
-As an example of graph, we are going to take well-known "Cubical" graph. Also let's randomly pick 4 terminals using `generate_st_samples`. We also specify `prob` variable, so at each step of random walk procedure node is accepted with probability `prob = 0.1`.
+As an example of graph, we are going to take well-known "Cubical" graph. Also let's randomly pick 2 terminals using `generate_st_samples`. We also specify `prob` variable, so at each step of random walk procedure node is accepted with probability `prob = 0.1`.
 
 ```{r}
 g <- graph("Cubical")
